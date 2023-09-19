@@ -241,7 +241,8 @@ void radix_sort(int32_t* array, size_t length)
 constexpr uint32_t convert_float_to_int(float value)
 {
     uint32_t i = *(uint32_t*)&value;
-    return (-(i >> 30 & 2) + 1) * (i | 0x8000'0000);
+    uint32_t sign = i >> 31;
+    return ((!sign - 1) ^ (i | 0x8000'0000)) + sign;
 }
 
 template<int lsr>
