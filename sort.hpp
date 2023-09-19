@@ -63,35 +63,22 @@ void merge(T* begin1, T* end1, T* begin2, T* end2, T* dest)
 {
     while (begin1 != end1 && begin2 != end2)
     {
-        if (*begin1 <= *begin2)
-        {
-            *dest = std::move(*begin1);
-            ++begin1;
-        }
-        else
-        {
-            *dest = std::move(*begin2);
-            ++begin2;
-        }
-        ++dest;
+        *dest++ = std::move(*begin1 <= *begin2 ? *begin1++ : *begin2++);
     }
     while (begin1 != end1)
     {
-        *dest = std::move(*begin1);
-        ++dest;
-        ++begin1;
+        *dest++ = std::move(*begin1++);
     }
     while (begin2 != end2)
     {
-        *dest = std::move(*begin2);
-        ++dest;
-        ++begin2;
+        *dest++ = std::move(*begin2++);
     }
 }
 
 template<typename T>
-void merge_sort(T* begin, size_t length)
+void merge_sort(T* begin, T* end)
 {
+    size_t length = end - begin;
     T* buffer = new T[length];
     T* original = begin;
     for (size_t partition = 1; partition < length; partition <<= 1)
@@ -110,6 +97,63 @@ void merge_sort(T* begin, size_t length)
     {
         std::copy(begin, begin + length, buffer);
         delete[] begin;
+    }
+}
+
+
+template<typename T>
+void insert_to_heap(T* heap, size_t old_size, T element)
+{
+    heap[old_size] = std::move(element);
+    for (size_t i = old_size, parent = (i - 1) >> 1; i > 0 && heap[parent] < heap[i]; i = parent, parent = (i - 1) >> 1)
+    {
+        std::swap(heap[i], heap[parent]);
+    }
+}
+
+template<typename T>
+void build_heap(T* heap, size_t size)
+{
+    for (size_t i = 0; i < size; ++i)
+    {
+        insert_to_heap(heap, i, heap[i]);
+    }
+}
+
+template<typename T>
+void shift_heap_root(T* heap, size_t size)
+{
+    std::swap(heap[0], heap[size - 1]);
+
+    size_t i = 0;
+    size -= 1;
+    for (;;)
+    {
+        size_t left = i << 1 | 1, right = (i << 1) + 2;
+        if (left >= size)
+        {
+            break;
+        }
+        size_t child = right < size && heap[right] > heap[left] ? right : left;
+        if (heap[child] <= heap[i])
+        {
+            break;
+        }
+
+        std::swap(heap[i], heap[child]);
+        i = child;
+    }
+}
+
+template<typename T>
+void heap_sort(T* begin, T* end)
+{
+    size_t length = end - begin;
+    build_heap(begin, length);
+    
+    for (size_t i = length; i > 0; --i)
+    {
+        shift_heap_root(begin, i);
     }
 }
 
