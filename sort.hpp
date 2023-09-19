@@ -7,6 +7,14 @@
 
 using std::size_t;
 using std::uint8_t;
+using std::int8_t;
+using std::uint16_t;
+using std::int16_t;
+using std::uint32_t;
+using std::int32_t;
+using std::uint64_t;
+using std::int64_t;
+
 
 template <typename T>
 T *partition_by_random_pivot(T *begin, T *end)
@@ -152,7 +160,7 @@ void shift_heap_root(T *heap, size_t size)
 }
 
 template <typename T>
-void heap_sort(T *array, size_t length)
+void heap_sort(T* array, size_t length)
 {
     build_heap(array, length);
 
@@ -163,20 +171,31 @@ void heap_sort(T *array, size_t length)
 }
 
 
-void counting_sort(uint8_t *array, size_t length)
+template<typename T, int offset>
+void counting_sort_generic(T* array, size_t length)
 {
     size_t counts[256] = {0};
-    for (uint8_t *ptr = array, *end = array + length; ptr < end; ++ptr)
+    for (T *ptr = array, *end = array + length; ptr < end; ++ptr)
     {
-        ++counts[*ptr];
+        ++counts[*ptr + offset];
     }
     for (size_t i = 0, dest = 0; i < 256; ++i)
     {
         for (size_t count = counts[i]; count > 0; --count, ++dest)
         {
-            array[dest] = i;
+            array[dest] = i - offset;
         }
     }
+}
+
+void counting_sort(uint8_t* array, size_t length)
+{
+    counting_sort_generic<uint8_t, 0>(array, length);
+}
+
+void counting_sort(int8_t* array, size_t length)
+{
+    counting_sort_generic<int8_t, 128>(array, length);
 }
 
 #endif

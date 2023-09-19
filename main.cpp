@@ -46,6 +46,7 @@ int main()
     test_sort<int32_t, 55, quick_sort>("Quick sort:\n");
     test_sort<int32_t, 55, merge_sort>("\nMerge sort:\n");
     test_sort<int32_t, 55, heap_sort>("\nHeap sort:\n");
-    test_sort<uint8_t, 55, counting_sort>("\nCounting sort:\n");
+    test_sort<uint8_t, 55, counting_sort>("\nCounting sort - unsigned:\n");
+    test_sort<int8_t, 55, counting_sort>("\nCounting sort - signed:\n");
     return 0;
 }
