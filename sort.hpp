@@ -2,13 +2,15 @@
 #define SORT_H_INCLUDED
 
 #include <cstdlib>
+#include <cstdint>
 #include <utility>
 
 using std::size_t;
+using std::uint8_t;
 
 
 template<typename T>
-T* quick_sort_partition(T* begin, T* end)
+T* partition_by_random_pivot(T* begin, T* end)
 {
     T* pivot = begin + rand() % (end - begin);
     for (T* ptr = begin; ptr < end; ++ptr)
@@ -37,24 +39,30 @@ T* quick_sort_partition(T* begin, T* end)
 }
 
 template<typename T>
-void quick_sort(T* begin, T* end)
+void quick_sort_between(T* begin, T* end)
 {
     if (end <= begin + 1)
     {
         return;
     }
-    T* pivot = quick_sort_partition(begin, end);
+    T* pivot = partition_by_random_pivot(begin, end);
     // Tail recurse with the greater partition
     if (pivot - begin > end - pivot - 1)
     {
-        quick_sort(pivot + 1, end);
-        quick_sort(begin, pivot);
+        quick_sort_between(pivot + 1, end);
+        quick_sort_between(begin, pivot);
     }
     else
     {
-        quick_sort(begin, pivot);
-        quick_sort(pivot + 1, end);
+        quick_sort_between(begin, pivot);
+        quick_sort_between(pivot + 1, end);
     }
+}
+
+template<typename T>
+void quick_sort(T* begin, size_t length)
+{
+    quick_sort_between(begin, begin + length);
 }
 
 
@@ -76,27 +84,26 @@ void merge(T* begin1, T* end1, T* begin2, T* end2, T* dest)
 }
 
 template<typename T>
-void merge_sort(T* begin, T* end)
+void merge_sort(T* array, size_t length)
 {
-    size_t length = end - begin;
     T* buffer = new T[length];
-    T* original = begin;
+    T* original = array;
     for (size_t partition = 1; partition < length; partition <<= 1)
     {
         for (size_t i = 0; i < length; i += partition << 1)
         {
             size_t mid_i = std::min(i + partition, length);
             size_t end_i = std::min(mid_i + partition, length);
-            merge(begin + i, begin + mid_i, begin + mid_i, begin + end_i, buffer + i);
+            merge(array + i, array + mid_i, array + mid_i, array + end_i, buffer + i);
         }
 
-        std::swap(buffer, begin);
+        std::swap(buffer, array);
     }
 
     if (original == buffer)
     {
-        std::copy(begin, begin + length, buffer);
-        delete[] begin;
+        std::copy(array, array + length, buffer);
+        delete[] array;
     }
 }
 
@@ -146,14 +153,13 @@ void shift_heap_root(T* heap, size_t size)
 }
 
 template<typename T>
-void heap_sort(T* begin, T* end)
+void heap_sort(T* array, size_t length)
 {
-    size_t length = end - begin;
-    build_heap(begin, length);
+    build_heap(array, length);
     
     for (size_t i = length; i > 0; --i)
     {
-        shift_heap_root(begin, i);
+        shift_heap_root(array, i);
     }
 }
 

@@ -31,21 +31,21 @@ int main()
 {
     srand(time(0));
 
-    int32_t items[177];
-/*
+    int32_t items[55];
+
     std::cout << "Quick sort:\n";
     randomize_array(items);
-    quick_sort(items, items + array_size(items));
+    quick_sort(items, array_size(items));
     print_array(items);
 
     std::cout << "\nMerge sort:\n";
     randomize_array(items);
-    merge_sort(items, items + array_size(items));
+    merge_sort(items, array_size(items));
     print_array(items);
-*/
+
     std::cout << "\nHeap sort:\n";
     randomize_array(items);
-    heap_sort(items, items + array_size(items));
+    heap_sort(items, array_size(items));
     print_array(items);
     return 0;
 }
