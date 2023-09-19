@@ -175,9 +175,9 @@ template<typename T, int offset>
 void counting_sort_generic(T* array, size_t length)
 {
     size_t counts[256] = {0};
-    for (T *ptr = array, *end = array + length; ptr < end; ++ptr)
+    for (size_t i = 0; i < length; ++i)
     {
-        ++counts[*ptr + offset];
+        ++counts[array[i] + offset];
     }
     for (size_t i = 0, dest = 0; i < 256; ++i)
     {
@@ -196,6 +196,68 @@ void counting_sort(uint8_t* array, size_t length)
 void counting_sort(int8_t* array, size_t length)
 {
     counting_sort_generic<int8_t, 128>(array, length);
+}
+
+
+template<typename T, typename SmallInt, size_t Range, SmallInt (*GetValue) (T)>
+void radix_sort_generic(T* input, size_t length, T* output)
+{
+    size_t counts[Range] = {0};
+    size_t starts[Range] = {0};
+
+    for (size_t i = 0; i < length; ++i)
+    {
+        ++counts[GetValue(input[i])];
+    }
+    for (size_t i = 1; i <= Range; ++i)
+    {
+        starts[i] = starts[i - 1] + counts[i - 1];
+    }
+
+    for (size_t i = 0; i < length; ++i)
+    {
+        size_t* start = starts + GetValue(input[i]);
+        output[*start] = input[i];
+        ++*start;
+    }
+}
+
+template<int lsr, typename R>
+constexpr R shift_and_convert_int32_t(int32_t value)
+{
+    return R(value + 0x8000'0000 >> lsr);
+}
+
+void radix_sort(int32_t* array, size_t length)
+{
+    int32_t* buffer = new int32_t[length];
+    radix_sort_generic<int32_t, uint8_t, 256, shift_and_convert_int32_t< 0, uint8_t>>(array, length, buffer);
+    radix_sort_generic<int32_t, uint8_t, 256, shift_and_convert_int32_t< 8, uint8_t>>(buffer, length, array);
+    radix_sort_generic<int32_t, uint8_t, 256, shift_and_convert_int32_t<16, uint8_t>>(array, length, buffer);
+    radix_sort_generic<int32_t, uint8_t, 256, shift_and_convert_int32_t<24, uint8_t>>(buffer, length, array);
+    delete[] buffer;
+}
+
+constexpr uint32_t convert_float_to_int(float value)
+{
+    uint32_t i = *(uint32_t*)&value;
+    return (-(i >> 30 & 2) + 1) * (i | 0x8000'0000);
+}
+
+template<int lsr>
+constexpr uint8_t shift_and_convert_float(float value)
+{
+    return convert_float_to_int(value) >> lsr;
+}
+
+void radix_sort(float* array, size_t length)
+{
+    float* buffer = new float[length];
+    radix_sort_generic<float, uint8_t, 256, shift_and_convert_float<0>>(array, length, buffer);
+    radix_sort_generic<float, uint8_t, 256, shift_and_convert_float<8>>(buffer, length, array);
+    radix_sort_generic<float, uint8_t, 256, shift_and_convert_float<16>>(array, length, buffer);
+    radix_sort_generic<float, uint8_t, 256, shift_and_convert_float<24>>(buffer, length, array);
+    delete[] buffer;
 }
 
 #endif
