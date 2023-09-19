@@ -6,6 +6,7 @@
 
 using std::size_t;
 
+
 template<typename T>
 void quick_sort(T* begin, T* end)
 {
@@ -13,16 +14,27 @@ void quick_sort(T* begin, T* end)
     {
         return;
     }
-    T* pivot = begin;// + rand() % (end - begin);
+    T* pivot = begin + rand() % (end - begin);
     for (T* ptr = begin; ptr < end; ++ptr)
     {
-        if (*ptr < *pivot)
+        if (*ptr < *pivot && ptr > pivot)
         {
             T tmp = std::move(*pivot);
             *pivot = std::move(*ptr);
             *ptr = std::move(pivot[1]);
             pivot[1] = std::move(tmp);
             ++pivot;
+        }
+    }
+    for (T* ptr = end - 1; ptr >= begin; --ptr)
+    {
+        if (*ptr > *pivot && ptr < pivot)
+        {
+            T tmp = std::move(*pivot);
+            *pivot = std::move(*ptr);
+            *ptr = std::move(pivot[-1]);
+            pivot[-1] = std::move(tmp);
+            --pivot;
         }
     }
     // Tail recurse with the greater partition
@@ -38,4 +50,8 @@ void quick_sort(T* begin, T* end)
     }
 }
 
+/*
+template<typename T>
+void merge(T* begin, T* )
+*/
 #endif
