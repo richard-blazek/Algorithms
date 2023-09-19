@@ -8,12 +8,11 @@
 using std::size_t;
 using std::uint8_t;
 
-
-template<typename T>
-T* partition_by_random_pivot(T* begin, T* end)
+template <typename T>
+T *partition_by_random_pivot(T *begin, T *end)
 {
-    T* pivot = begin + rand() % (end - begin);
-    for (T* ptr = begin; ptr < end; ++ptr)
+    T *pivot = begin + rand() % (end - begin);
+    for (T *ptr = begin; ptr < end; ++ptr)
     {
         if (*ptr < *pivot && ptr > pivot)
         {
@@ -24,7 +23,7 @@ T* partition_by_random_pivot(T* begin, T* end)
             ++pivot;
         }
     }
-    for (T* ptr = end - 1; ptr >= begin; --ptr)
+    for (T *ptr = end - 1; ptr >= begin; --ptr)
     {
         if (*ptr > *pivot && ptr < pivot)
         {
@@ -38,14 +37,14 @@ T* partition_by_random_pivot(T* begin, T* end)
     return pivot;
 }
 
-template<typename T>
-void quick_sort_between(T* begin, T* end)
+template <typename T>
+void quick_sort_between(T *begin, T *end)
 {
     if (end <= begin + 1)
     {
         return;
     }
-    T* pivot = partition_by_random_pivot(begin, end);
+    T *pivot = partition_by_random_pivot(begin, end);
     // Tail recurse with the greater partition
     if (pivot - begin > end - pivot - 1)
     {
@@ -59,15 +58,15 @@ void quick_sort_between(T* begin, T* end)
     }
 }
 
-template<typename T>
-void quick_sort(T* begin, size_t length)
+template <typename T>
+void quick_sort(T *begin, size_t length)
 {
     quick_sort_between(begin, begin + length);
 }
 
 
-template<typename T>
-void merge(T* begin1, T* end1, T* begin2, T* end2, T* dest)
+template <typename T>
+void merge(T *begin1, T *end1, T *begin2, T *end2, T *dest)
 {
     while (begin1 != end1 && begin2 != end2)
     {
@@ -83,11 +82,11 @@ void merge(T* begin1, T* end1, T* begin2, T* end2, T* dest)
     }
 }
 
-template<typename T>
-void merge_sort(T* array, size_t length)
+template <typename T>
+void merge_sort(T *array, size_t length)
 {
-    T* buffer = new T[length];
-    T* original = array;
+    T *buffer = new T[length];
+    T *original = array;
     for (size_t partition = 1; partition < length; partition <<= 1)
     {
         for (size_t i = 0; i < length; i += partition << 1)
@@ -108,8 +107,8 @@ void merge_sort(T* array, size_t length)
 }
 
 
-template<typename T>
-void insert_to_heap(T* heap, size_t old_size, T element)
+template <typename T>
+void insert_to_heap(T *heap, size_t old_size, T element)
 {
     heap[old_size] = std::move(element);
     for (size_t i = old_size, parent = (i - 1) >> 1; i > 0 && heap[parent] < heap[i]; i = parent, parent = (i - 1) >> 1)
@@ -118,8 +117,8 @@ void insert_to_heap(T* heap, size_t old_size, T element)
     }
 }
 
-template<typename T>
-void build_heap(T* heap, size_t size)
+template <typename T>
+void build_heap(T *heap, size_t size)
 {
     for (size_t i = 0; i < size; ++i)
     {
@@ -127,8 +126,8 @@ void build_heap(T* heap, size_t size)
     }
 }
 
-template<typename T>
-void shift_heap_root(T* heap, size_t size)
+template <typename T>
+void shift_heap_root(T *heap, size_t size)
 {
     std::swap(heap[0], heap[size - 1]);
 
@@ -152,14 +151,31 @@ void shift_heap_root(T* heap, size_t size)
     }
 }
 
-template<typename T>
-void heap_sort(T* array, size_t length)
+template <typename T>
+void heap_sort(T *array, size_t length)
 {
     build_heap(array, length);
-    
+
     for (size_t i = length; i > 0; --i)
     {
         shift_heap_root(array, i);
+    }
+}
+
+
+void counting_sort(uint8_t *array, size_t length)
+{
+    size_t counts[256] = {0};
+    for (uint8_t *ptr = array, *end = array + length; ptr < end; ++ptr)
+    {
+        ++counts[*ptr];
+    }
+    for (size_t i = 0, dest = 0; i < 256; ++i)
+    {
+        for (size_t count = counts[i]; count > 0; --count, ++dest)
+        {
+            array[dest] = i;
+        }
     }
 }
 

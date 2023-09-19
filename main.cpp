@@ -16,7 +16,7 @@ void print_array(T (&array)[S])
 {
     for (size_t i = 0; i < S; ++i)
     {
-        std::cout << array[i] << "\n";
+        std::cout << int64_t(array[i]) << "\n";
     }
 }
 
@@ -27,25 +27,25 @@ constexpr size_t array_size(T (&)[S])
 }
 
 
+template<typename T, size_t S, void (*Fn) (T*, size_t)>
+void test_sort(std::string prompt)
+{
+    T items[S];
+    randomize_array(items);
+    Fn(items, array_size(items));
+
+    std::cout << prompt;
+    print_array(items);
+}
+
+
 int main()
 {
     srand(time(0));
 
-    int32_t items[55];
-
-    std::cout << "Quick sort:\n";
-    randomize_array(items);
-    quick_sort(items, array_size(items));
-    print_array(items);
-
-    std::cout << "\nMerge sort:\n";
-    randomize_array(items);
-    merge_sort(items, array_size(items));
-    print_array(items);
-
-    std::cout << "\nHeap sort:\n";
-    randomize_array(items);
-    heap_sort(items, array_size(items));
-    print_array(items);
+    test_sort<int32_t, 55, quick_sort>("Quick sort:\n");
+    test_sort<int32_t, 55, merge_sort>("\nMerge sort:\n");
+    test_sort<int32_t, 55, heap_sort>("\nHeap sort:\n");
+    test_sort<uint8_t, 55, counting_sort>("\nCounting sort:\n");
     return 0;
 }
