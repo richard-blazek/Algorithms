@@ -135,7 +135,7 @@ void build_heap(T *heap, size_t size)
 }
 
 template <typename T>
-void shift_heap_root(T *heap, size_t size)
+void unshift_heap(T *heap, size_t size)
 {
     std::swap(heap[0], heap[size - 1]);
 
@@ -166,7 +166,7 @@ void heap_sort(T* array, size_t length)
 
     for (size_t i = length; i > 0; --i)
     {
-        shift_heap_root(array, i);
+        unshift_heap(array, i);
     }
 }
 
