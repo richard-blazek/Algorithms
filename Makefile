@@ -1,7 +1,7 @@
 OPTIONS='-g'
 
-main: main.o sort.o link1_list.o link2_list.o stack.o
-	cc $(OPTIONS) main.o sort.o link1_list.o link2_list.o stack.o -o main
+main: main.o sort.o link1_list.o link2_list.o stack.o queue.o
+	cc $(OPTIONS) main.o sort.o link1_list.o link2_list.o stack.o queue.o -o main
 
 main.o: main.c
 	cc $(OPTIONS) -c main.c -o main.o
@@ -17,3 +17,6 @@ link2_list.o: link2_list.c
 
 stack.o: stack.c
 	cc $(OPTIONS) -c stack.c -o stack.o
+
+queue.o: queue.c
+	cc $(OPTIONS) -c queue.c -o queue.o

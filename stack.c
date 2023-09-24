@@ -1,4 +1,5 @@
 #include "stack.h"
+#include "link1_list.h"
 #include <stdlib.h>
 
 struct stack

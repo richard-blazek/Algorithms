@@ -1,4 +1,6 @@
-#include "link1_list.h"
+#ifndef STACK_H_INCLUDED
+#define STACK_H_INCLUDED
+
 #include <stdbool.h>
 
 typedef struct stack stack;
@@ -9,3 +11,5 @@ bool stack_empty(stack* st);
 float stack_top(stack* st);
 float stack_pop(stack* st);
 void stack_free(stack* st);
+
+#endif
