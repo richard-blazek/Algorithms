@@ -92,6 +92,30 @@ void test_link1_list()
     link1_list_free(list);
 }
 
+void test_link2_list()
+{
+    puts("Playing with the singly linked list:");
+    link2_node* list = link2_list_init();
+    link2_list_insert_before(list, 1);
+    link2_list_insert_before(list, 2);
+    link2_list_insert_before(list, 3);
+    link2_list_insert_before(list, 4);
+    link2_list_insert_before(list, 5);
+    link2_list_insert_after(list, 6);
+    link2_list_insert_after(list, 7);
+    link2_list_insert_after(list, 8);
+    link2_list_insert_after(list, 9);
+    link2_list_insert_after(list, 10);
+
+    link2_list_erase_before(list);
+    link2_node* it = list->next->next;
+    it = link2_list_insert_after(it, 666);
+    it = it->next;
+    link2_list_erase(it);
+    print_link2_list(list);
+    link2_list_free(list);
+}
+
 int main()
 {
     srand(time(0));
@@ -103,5 +127,6 @@ int main()
     test_sort_uint8_t(counting_sort, "Counting sort:");
 
     test_link1_list();
+    test_link2_list();
     return 0;
 }
