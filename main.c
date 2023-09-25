@@ -166,6 +166,8 @@ void test_deque()
     deque_push_back(dq, 2);
     deque_push_front(dq, 0);
     deque_push_back(dq, 3);
+    deque_push_front(dq, -1);
+    deque_push_back(dq, 4);
     printf("%ld %ld\n", deque_length(dq), deque_capacity(dq));
 
     for (size_t i = 0, len = deque_length(dq); i < len; ++i)

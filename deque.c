@@ -110,6 +110,7 @@ void deque_push_front(deque* dq, float value)
 {
     deque_resize(dq, dq->length + 1);
     deque_set(dq, dq->capacity - 1, value);
+    dq->shift = (dq->shift - 1 + dq->capacity) % dq->capacity;
 }
 
 float deque_pop_back(deque *dq)
