@@ -182,6 +182,7 @@ void test_deque()
         printf("%.1f ", deque_get(dq, i));
     }
     putchar('\n');
+    deque_free(dq);
 }
 
 int main()
