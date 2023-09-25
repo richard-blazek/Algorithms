@@ -21,7 +21,7 @@ void queue_push(queue* q, float value)
 
 bool queue_empty(queue* q)
 {
-    return q->list->next = q->list;
+    return q->list->next == q->list;
 }
 
 float queue_top(queue* q)

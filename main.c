@@ -5,6 +5,8 @@
 #include "sort.h"
 #include "link1_list.h"
 #include "link2_list.h"
+#include "stack.h"
+#include "queue.h"
 
 #define ARRAY_SIZE 55
 
@@ -94,7 +96,7 @@ void test_link1_list()
 
 void test_link2_list()
 {
-    puts("Playing with the singly linked list:");
+    puts("Playing with the doubly linked list:");
     link2_node* list = link2_list_init();
     link2_list_insert_before(list, 1);
     link2_list_insert_before(list, 2);
@@ -116,6 +118,44 @@ void test_link2_list()
     link2_list_free(list);
 }
 
+void test_stack()
+{
+    puts("Playing with the stack:");
+    stack* st = stack_init();
+    stack_push(st, 1);
+    stack_push(st, 1);
+    stack_push(st, 2);
+    stack_push(st, 3);
+    stack_push(st, 5);
+    stack_push(st, 8);
+    stack_push(st, 13);
+    stack_push(st, 21);
+    while (!stack_empty(st))
+    {
+        printf("%.1f ", stack_pop(st));
+    }
+    printf("\n");
+}
+
+void test_queue()
+{
+    puts("Playing with the queue:");
+    queue* st = queue_init();
+    queue_push(st, 1);
+    queue_push(st, 1);
+    queue_push(st, 2);
+    queue_push(st, 3);
+    queue_push(st, 5);
+    queue_push(st, 8);
+    queue_push(st, 13);
+    queue_push(st, 21);
+    while (!queue_empty(st))
+    {
+        printf("%.1f ", queue_pop(st));
+    }
+    printf("\n");
+}
+
 int main()
 {
     srand(time(0));
@@ -128,5 +168,7 @@ int main()
 
     test_link1_list();
     test_link2_list();
+    test_stack();
+    test_queue();
     return 0;
 }
