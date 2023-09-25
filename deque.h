@@ -8,6 +8,9 @@ typedef struct deque deque;
 deque* deque_init(size_t capacity);
 void deque_free(deque* dq);
 
+size_t deque_length(deque* dq);
+size_t deque_capacity(deque* dq);
+
 float deque_get(deque* dq, size_t i);
 void deque_set(deque* dq, size_t i, float value);
 

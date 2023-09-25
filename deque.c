@@ -16,7 +16,8 @@ deque* deque_init(size_t capacity)
 {
     deque* dq = malloc(sizeof(deque));
     dq->data = malloc(sizeof(float) * capacity);
-    dq->capacity = dq->length = dq->shift = 0;
+    dq->capacity = capacity;
+    dq->length = dq->shift = 0;
     return dq;
 }
 
@@ -24,6 +25,16 @@ void deque_free(deque* dq)
 {
     free(dq->data);
     free(dq);
+}
+
+size_t deque_length(deque *dq)
+{
+    return dq->length;
+}
+
+size_t deque_capacity(deque *dq)
+{
+    return dq->capacity;
 }
 
 float deque_get(deque* dq, size_t i)
@@ -91,15 +102,13 @@ void deque_shrink(deque* dq)
 
 void deque_push_back(deque* dq, float value)
 {
-    deque_reserve(dq, dq->length + 1);
-    ++dq->length;
-    deque_set(dq, dq->length, value);
+    deque_resize(dq, dq->length + 1);
+    deque_set(dq, dq->length - 1, value);
 }
 
 void deque_push_front(deque* dq, float value)
 {
-    deque_reserve(dq, dq->length + 1);
-    ++dq->length;
+    deque_resize(dq, dq->length + 1);
     deque_set(dq, dq->capacity - 1, value);
 }
 

@@ -35,6 +35,7 @@ float link2_list_erase(link2_node* node)
         free(node);
         return old_value;
     }
+    return 0.0f;
 }
 
 float link2_list_erase_after(link2_node* node)

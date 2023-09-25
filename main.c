@@ -7,6 +7,7 @@
 #include "link2_list.h"
 #include "stack.h"
 #include "queue.h"
+#include "deque.h"
 
 #define ARRAY_SIZE 55
 
@@ -134,26 +135,44 @@ void test_stack()
     {
         printf("%.1f ", stack_pop(st));
     }
-    printf("\n");
+    putchar('\n');
 }
 
 void test_queue()
 {
     puts("Playing with the queue:");
-    queue* st = queue_init();
-    queue_push(st, 1);
-    queue_push(st, 1);
-    queue_push(st, 2);
-    queue_push(st, 3);
-    queue_push(st, 5);
-    queue_push(st, 8);
-    queue_push(st, 13);
-    queue_push(st, 21);
-    while (!queue_empty(st))
+    queue* q = queue_init();
+    queue_push(q, 1);
+    queue_push(q, 1);
+    queue_push(q, 2);
+    queue_push(q, 3);
+    queue_push(q, 5);
+    queue_push(q, 8);
+    queue_push(q, 13);
+    queue_push(q, 21);
+    while (!queue_empty(q))
     {
-        printf("%.1f ", queue_pop(st));
+        printf("%.1f ", queue_pop(q));
     }
-    printf("\n");
+    putchar('\n');
+}
+
+void test_deque()
+{
+    puts("Playing with the deque:");
+    deque* dq = deque_init(3);
+    printf("%ld %ld\n", deque_length(dq), deque_capacity(dq));
+    deque_push_back(dq, 1);
+    deque_push_back(dq, 2);
+    deque_push_front(dq, 0);
+    deque_push_back(dq, 3);
+    printf("%ld %ld\n", deque_length(dq), deque_capacity(dq));
+
+    for (size_t i = 0, len = deque_length(dq); i < len; ++i)
+    {
+        printf("%.1f ", deque_get(dq, i));
+    }
+    putchar('\n');
 }
 
 int main()
@@ -170,5 +189,6 @@ int main()
     test_link2_list();
     test_stack();
     test_queue();
+    test_deque();
     return 0;
 }

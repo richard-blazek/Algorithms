@@ -25,6 +25,7 @@ float link1_list_erase_after(link1_node* node)
         free(old_node);
         return old_value;
     }
+    return 0.0f;
 }
 
 void link1_list_free(link1_node* list)
