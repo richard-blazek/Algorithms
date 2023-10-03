@@ -164,3 +164,12 @@ def _get_irreducible_polynomial(degree, zero, one):
 
 def get_galois_field_divisor(degree: int, prime: int):
     return _get_irreducible_polynomial(degree, ResidualClass(0, prime), ResidualClass(1, prime))
+
+
+def _int_to_field(degree: int, prime: int, number: int, divisor: Polynomial):
+    return ResidualClass(Polynomial([ResidualClass(number // (prime ** i), prime) for i in range(degree)]), divisor)
+
+def encode(degree: int, prime: int, values: list[int], output_length: int):
+    divisor = get_galois_field_divisor(degree, prime)
+    a = Polynomial([_int_to_field(degree, prime, value, divisor) for value in values])
+    return [a.evaluate(_int_to_field(degree, prime, i, divisor)) for i in range(output_length)]
