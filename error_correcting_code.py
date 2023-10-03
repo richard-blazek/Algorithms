@@ -62,7 +62,7 @@ class ResidualClass:
 
 
 class Polynomial:
-    def __init__(self, coefficients: list):
+    def __init__(self, coefficients: list = []):
         max_nonzero = max((i for i, c in enumerate(coefficients) if c), default=-1)
         self._coefficients = coefficients[:max_nonzero+1]
 
@@ -71,22 +71,20 @@ class Polynomial:
 
     def __add__(self, other):
         result = [a + b for a, b in zip(self._coefficients, other._coefficients)]
-        while len(self._coefficients) > len(result):
-            result.append(self._coefficients[len(result)])
-        while len(other._coefficients) > len(result):
-            result.append(other._coefficients[len(result)])
+        result += self._coefficients[len(result):]
+        result += other._coefficients[len(result):]
         return Polynomial(result)
-    
+
     def __neg__(self):
         return Polynomial([-c for c in self._coefficients])
-    
+
     def __sub__(self, other):
         return self + (-other)
 
     def __mul__(self, other):
         if not self._coefficients or not other._coefficients:
-            return Polynomial([])
-        result = [None] * (len(self._coefficients) + len(other._coefficients))
+            return Polynomial()
+        result = [None] * (len(self._coefficients) + len(other._coefficients) - 1)
         for i in range(len(self._coefficients)):
             for j in range(len(other._coefficients)):
                 product = self._coefficients[i] * other._coefficients[j]
@@ -106,7 +104,7 @@ class Polynomial:
                 power = '' if i == 0 else 'x' if i == 1 else f'x^{i}'
                 coef = str(c) if c != c // c or i == 0 else ''
                 result = f'{plus}{coef}{power}' + result
-        return result
+        return f'({result})'
 
     def __bool__(self):
         return len(self._coefficients) > 0
@@ -124,7 +122,7 @@ class Polynomial:
                 a[i + j] -= result[i] * b[j]
 
         return (Polynomial(result), Polynomial(a))
-    
+
     def __floordiv__(self, other):
         return divmod(self, other)[0]
 
@@ -158,11 +156,11 @@ def _is_divisible_by_any(polynomial: Polynomial, divisors):
             return True
     return False
 
-def _get_irreducible(degree, zero, one):
+def _get_irreducible_polynomial(degree, zero, one):
     divisors = list(_enumerate_polynomials(1, zero, one)) + list(_enumerate_polynomials(2, zero, one))
     for p in _enumerate_polynomials(degree, zero, one):
         if not _is_divisible_by_any(p, divisors):
             return p
 
-def get_galois_field_divisor(degree, prime):
-    return _get_irreducible(degree, ResidualClass(0, prime), ResidualClass(1, prime))
+def get_galois_field_divisor(degree: int, prime: int):
+    return _get_irreducible_polynomial(degree, ResidualClass(0, prime), ResidualClass(1, prime))
