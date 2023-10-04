@@ -8,6 +8,7 @@
 #include "stack.h"
 #include "queue.h"
 #include "deque.h"
+#include "priority_queue.h"
 
 #define ARRAY_SIZE 55
 
@@ -181,8 +182,27 @@ void test_deque()
     {
         printf("%.1f ", deque_get(dq, i));
     }
-    putchar('\n');
+    puts("\n");
     deque_free(dq);
+}
+
+void test_priority_queue()
+{
+    puts("Playing with the priority queue:");
+    priority_queue* priorityq = priority_queue_init();
+    priority_queue_push(priorityq, 1.0 / 4, 4);
+    priority_queue_push(priorityq, 1.0 / 8, 8);
+    priority_queue_push(priorityq, 1.0 / 1, 1);
+    priority_queue_push(priorityq, 1.0 / 5, 5);
+    priority_queue_push(priorityq, 1.0 / 2, 2);
+    priority_queue_push(priorityq, 1.0 / 4, 4);
+    priority_queue_push(priorityq, 1.0 / 10, 10);
+    priority_queue_push(priorityq, 1.0 / 4, 4);
+    while (!priority_queue_empty(priorityq))
+    {
+        printf("%.3f ", priority_queue_pop(priorityq));
+    }
+    putchar('\n');
 }
 
 int main()
@@ -200,5 +220,6 @@ int main()
     test_stack();
     test_queue();
     test_deque();
+    test_priority_queue();
     return 0;
 }
