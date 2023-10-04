@@ -34,6 +34,15 @@ static void increment_length(priority_queue* q)
     ++q->length;
 }
 
+static void decrement_length(priority_queue* q)
+{
+    --q->length;
+    if (q->length < q->capacity >> 2)
+    {
+        set_capacity(q, q->capacity >> 1);
+    }
+}
+
 static void bubble_up(priority_queue* q, size_t i)
 {
     float tmpf;
@@ -93,13 +102,9 @@ float priority_queue_pop(priority_queue* q)
     float result = q->values[0];
     q->values[0] = q->values[q->length - 1];
 
-    q->length -= 1;
+    decrement_length(q);
     bubble_down(q, 0);
 
-    if (q->length < q->capacity >> 2)
-    {
-        set_capacity(q, q->capacity >> 1);
-    }
     return result;
 }
 

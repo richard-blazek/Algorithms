@@ -1,7 +1,7 @@
-OPTIONS='-g'
+OPTIONS = -g -O0
 
-main: main.o sort.o link1_list.o link2_list.o stack.o queue.o deque.o
-	cc $(OPTIONS) main.o sort.o link1_list.o link2_list.o stack.o queue.o deque.o -o main
+main: main.o sort.o link1_list.o link2_list.o stack.o queue.o deque.o priority_queue.o
+	cc $(OPTIONS) main.o sort.o link1_list.o link2_list.o stack.o queue.o deque.o priority_queue.o -o main
 
 main.o: main.c
 	cc $(OPTIONS) -c main.c -o main.o
@@ -23,3 +23,9 @@ stack.o: stack.c
 
 queue.o: queue.c
 	cc $(OPTIONS) -c queue.c -o queue.o
+
+priority_queue.o: priority_queue.c
+	cc $(OPTIONS) -c priority_queue.c -o priority_queue.o
+
+clean:
+	rm -rf *.o main
