@@ -197,10 +197,12 @@ void test_priority_queue()
     priority_queue_push(priorityq, 1.0 / 2, 2);
     priority_queue_push(priorityq, 1.0 / 4, 4);
     priority_queue_push(priorityq, 1.0 / 10, 10);
-    priority_queue_push(priorityq, 1.0 / 4, 4);
+    priority_queue_push(priorityq, 1.0 / 4, 6);
+    priority_queue_push(priorityq, 1.0 / 4, 3);
     while (!priority_queue_empty(priorityq))
     {
-        printf("%.3f ", priority_queue_pop(priorityq));
+        printf("(%d ", priority_queue_top_priority(priorityq));
+        printf("%.3f) ", priority_queue_pop(priorityq));
     }
     putchar('\n');
 }
