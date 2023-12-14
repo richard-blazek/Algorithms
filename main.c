@@ -9,6 +9,7 @@
 #include "queue.h"
 #include "deque.h"
 #include "priority_queue.h"
+#include "hash_table.h"
 
 #define ARRAY_SIZE 55
 
@@ -207,6 +208,35 @@ void test_priority_queue()
     putchar('\n');
 }
 
+void test_hash_table()
+{
+    puts("Playing with the hash table:");
+    hash_table* ht = hash_table_init();
+    
+    const char* str = "I don't want to live in the hearts of my countrymen; I want to live in my apartment.";
+
+    for (size_t i = 0; i < 66; ++i)
+    {
+        hash_table_put(ht, str + i, i * 10);
+    }
+    for (size_t i = 0; i < 66; i += 2)
+    {
+        hash_table_delete(ht, str + i);
+    }
+    for (size_t i = 1; i < 66; i += 4)
+    {
+        hash_table_delete(ht, str + i);
+    }
+    for (size_t i = 0; i < 66; i += 3)
+    {
+        hash_table_delete(ht, str + i);
+    }
+    for (size_t i = 0; i < 66; ++i)
+    {
+        printf("i: %lu | has: %d | value: %.0f\n", i, hash_table_has(ht, str + i), hash_table_get(ht, str + i));
+    }
+}
+
 int main()
 {
     srand(time(0));
@@ -223,5 +253,6 @@ int main()
     test_queue();
     test_deque();
     test_priority_queue();
+    test_hash_table();
     return 0;
 }
