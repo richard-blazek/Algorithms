@@ -1,25 +1,25 @@
-#include "link1_list.h"
+#include "singly_ll.h"
 #include <stdlib.h>
 
-link1_node *link1_list_init()
+singly_ll *singly_ll_init()
 {
-    return calloc(1, sizeof(link1_node));
+    return calloc(1, sizeof(singly_ll));
 }
 
-link1_node *link1_list_insert_after(link1_node *node, float new_value)
+singly_ll *singly_ll_insert_after(singly_ll *node, float new_value)
 {
-    link1_node *new_node = malloc(sizeof(link1_node));
+    singly_ll *new_node = malloc(sizeof(singly_ll));
     new_node->next = node->next;
     new_node->value = new_value;
     node->next = new_node;
     return new_node;
 }
 
-float link1_list_erase_after(link1_node *node)
+float singly_ll_erase_after(singly_ll *node)
 {
     if (node->next)
     {
-        link1_node *old_node = node->next;
+        singly_ll *old_node = node->next;
         float old_value = old_node->value;
         node->next = old_node->next;
         free(old_node);
@@ -28,9 +28,9 @@ float link1_list_erase_after(link1_node *node)
     return 0.0f;
 }
 
-void link1_list_free(link1_node *list)
+void singly_ll_free(singly_ll *list)
 {
-    link1_node *next = 0;
+    singly_ll *next = 0;
     while (list)
     {
         next = list->next;

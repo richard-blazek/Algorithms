@@ -1,17 +1,17 @@
-#include "link2_list.h"
+#include "doubly_ll.h"
 #include <stdlib.h>
 
-link2_node *link2_list_init()
+doubly_ll *doubly_ll_init()
 {
-    link2_node *sentinel = malloc(sizeof(link2_node));
+    doubly_ll *sentinel = malloc(sizeof(doubly_ll));
     sentinel->next = sentinel;
     sentinel->prev = sentinel;
     return sentinel;
 }
 
-link2_node *link2_list_insert_after(link2_node *node, float new_value)
+doubly_ll *doubly_ll_insert_after(doubly_ll *node, float new_value)
 {
-    link2_node *new_node = malloc(sizeof(link2_node));
+    doubly_ll *new_node = malloc(sizeof(doubly_ll));
     new_node->next = node->next;
     node->next->prev = new_node;
     new_node->prev = node;
@@ -20,7 +20,7 @@ link2_node *link2_list_insert_after(link2_node *node, float new_value)
     return new_node;
 }
 
-float link2_list_erase(link2_node *node)
+float doubly_ll_erase(doubly_ll *node)
 {
     if (node->next != node)
     {
@@ -33,9 +33,9 @@ float link2_list_erase(link2_node *node)
     return 0.0f;
 }
 
-void link2_list_free(link2_node *sentinel)
+void doubly_ll_free(doubly_ll *sentinel)
 {
-    link2_node *node = sentinel, *next;
+    doubly_ll *node = sentinel, *next;
     do
     {
         next = node->next;

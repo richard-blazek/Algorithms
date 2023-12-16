@@ -1,22 +1,22 @@
 #include "queue.h"
-#include "link2_list.h"
+#include "doubly_ll.h"
 #include <stdlib.h>
 
 struct queue
 {
-    link2_node *list;
+    doubly_ll *list;
 };
 
 queue *queue_init()
 {
     queue *q = malloc(sizeof(queue));
-    q->list = link2_list_init();
+    q->list = doubly_ll_init();
     return q;
 }
 
 void queue_push(queue *q, float value)
 {
-    link2_list_insert_after(q->list, value);
+    doubly_ll_insert_after(q->list, value);
 }
 
 bool queue_empty(queue *q)
@@ -31,11 +31,11 @@ float queue_top(queue *q)
 
 float queue_pop(queue *q)
 {
-    return link2_list_erase(q->list->prev);
+    return doubly_ll_erase(q->list->prev);
 }
 
 void queue_free(queue *q)
 {
-    link2_list_free(q->list);
+    doubly_ll_free(q->list);
     free(q);
 }

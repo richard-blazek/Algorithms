@@ -3,14 +3,14 @@
 #include <time.h>
 
 #include "sort.h"
-#include "link1_list.h"
-#include "link2_list.h"
+#include "singly_ll.h"
+#include "doubly_ll.h"
 #include "stack.h"
 #include "queue.h"
 #include "deque.h"
 #include "priority_queue.h"
 #include "hash_table.h"
-#include "link_xor_list.h"
+#include "xored_ll.h"
 
 #define ARRAY_SIZE 55
 
@@ -50,7 +50,7 @@ void test_sort_uint8_t(void (*sort)(uint8_t *, size_t), const char *prompt)
     putchar('\n');
 }
 
-void print_link1_list(link1_node *node)
+void print_singly_ll(singly_ll *node)
 {
     node = node->next;
     while (node)
@@ -61,9 +61,9 @@ void print_link1_list(link1_node *node)
     printf("\n");
 }
 
-void print_link2_list(link2_node *sentinel)
+void print_doubly_ll(doubly_ll *sentinel)
 {
-    link2_node *current = sentinel->next;
+    doubly_ll *current = sentinel->next;
     while (current != sentinel)
     {
         printf("%.2f ", current->value);
@@ -72,53 +72,53 @@ void print_link2_list(link2_node *sentinel)
     printf("\n");
 }
 
-void test_link1_list()
+void test_singly_ll()
 {
     puts("Playing with the singly linked list:");
-    link1_node *list = link1_list_init();
-    link1_list_insert_after(list, 1);
-    link1_list_insert_after(list, 2);
-    link1_list_insert_after(list, 3);
-    link1_list_insert_after(list, 4);
-    link1_list_insert_after(list, 5);
-    link1_list_insert_after(list, 6);
-    link1_list_insert_after(list, 7);
-    link1_list_insert_after(list, 8);
-    link1_list_insert_after(list, 9);
-    link1_list_insert_after(list, 10);
-    link1_node *it = list->next->next->next;
-    link1_list_erase_after(it);
-    it = link1_list_insert_after(it, 666);
+    singly_ll *list = singly_ll_init();
+    singly_ll_insert_after(list, 1);
+    singly_ll_insert_after(list, 2);
+    singly_ll_insert_after(list, 3);
+    singly_ll_insert_after(list, 4);
+    singly_ll_insert_after(list, 5);
+    singly_ll_insert_after(list, 6);
+    singly_ll_insert_after(list, 7);
+    singly_ll_insert_after(list, 8);
+    singly_ll_insert_after(list, 9);
+    singly_ll_insert_after(list, 10);
+    singly_ll *it = list->next->next->next;
+    singly_ll_erase_after(it);
+    it = singly_ll_insert_after(it, 666);
     it = it->next;
-    link1_list_insert_after(it, 1001);
+    singly_ll_insert_after(it, 1001);
     it = it->next->next;
-    link1_list_erase_after(it);
-    print_link1_list(list);
-    link1_list_free(list);
+    singly_ll_erase_after(it);
+    print_singly_ll(list);
+    singly_ll_free(list);
 }
 
-void test_link2_list()
+void test_doubly_ll()
 {
     puts("Playing with the doubly linked list:");
-    link2_node *list = link2_list_init();
-    link2_list_insert_after(list, 1);
-    link2_list_insert_after(list, 2);
-    link2_list_insert_after(list->prev, 3);
-    link2_list_insert_after(list->prev, 4);
-    link2_list_insert_after(list->prev, 5);
-    link2_list_insert_after(list, 6);
-    link2_list_insert_after(list, 7);
-    link2_list_insert_after(list, 8);
-    link2_list_insert_after(list, 9);
-    link2_list_insert_after(list, 10);
+    doubly_ll *list = doubly_ll_init();
+    doubly_ll_insert_after(list, 1);
+    doubly_ll_insert_after(list, 2);
+    doubly_ll_insert_after(list->prev, 3);
+    doubly_ll_insert_after(list->prev, 4);
+    doubly_ll_insert_after(list->prev, 5);
+    doubly_ll_insert_after(list, 6);
+    doubly_ll_insert_after(list, 7);
+    doubly_ll_insert_after(list, 8);
+    doubly_ll_insert_after(list, 9);
+    doubly_ll_insert_after(list, 10);
 
-    link2_list_erase(list->prev);
-    link2_node *it = list->next->next;
-    it = link2_list_insert_after(it, 666);
+    doubly_ll_erase(list->prev);
+    doubly_ll *it = list->next->next;
+    it = doubly_ll_insert_after(it, 666);
     it = it->next;
-    link2_list_erase(it);
-    print_link2_list(list);
-    link2_list_free(list);
+    doubly_ll_erase(it);
+    print_doubly_ll(list);
+    doubly_ll_free(list);
 }
 
 void test_stack()
@@ -245,22 +245,26 @@ void test_xor_linked_list()
 {
     puts("Playing with the XOR linked list:");
 
-    link_xor_node *list = link_xor_list_init();
-    link_xor_list_insert_after(0, list, 1);
-    link_xor_list_insert_after(0, list, 2);
-    link_xor_list_insert_after(0, list, 3);
-    link_xor_list_insert_after(0, list, 4);
+    xored_ll *list = xored_ll_init();
+    xored_ll_insert_after(0, list, 2);
+    xored_ll *four = xored_ll_insert_after(0, list, 4);
+    xored_ll *five = xored_ll_insert_after(0, list, 5);
+    xored_ll_insert_after(0, list, 6);
+    xored_ll *eight = xored_ll_insert_after(0, list, 8);
+    
+    xored_ll_insert_after(list, eight, 7);
+    xored_ll_erase(four, five);
 
-    link_xor_node *current = link_xor_list_next(0, list), *prev = list;
+    xored_ll *current = xored_ll_next(0, list), *prev = list;
     while (current)
     {
-        printf("%.0f ", link_xor_list_value(current));
-        link_xor_node *next = link_xor_list_next(prev, current);
+        printf("%.0f ", xored_ll_value(current));
+        xored_ll *next = xored_ll_next(prev, current);
         prev = current;
         current = next;
     }
     putchar('\n');
-    link_xor_list_free(list);
+    xored_ll_free(list);
 }
 
 int main()
@@ -273,8 +277,8 @@ int main()
     test_sort_float(radix_sort, "Radix sort:");
     test_sort_uint8_t(counting_sort, "Counting sort:");
 
-    test_link1_list();
-    test_link2_list();
+    test_singly_ll();
+    test_doubly_ll();
     test_stack();
     test_queue();
     test_deque();

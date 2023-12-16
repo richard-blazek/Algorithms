@@ -1,7 +1,7 @@
 OPTIONS = -g -O0 -fsanitize=address
 
-main: main.o sort.o link1_list.o link2_list.o link_xor_list.o stack.o queue.o deque.o priority_queue.o hash_table.o
-	cc $(OPTIONS) main.o sort.o link1_list.o link2_list.o link_xor_list.o stack.o queue.o deque.o priority_queue.o hash_table.o -o main
+main: main.o sort.o singly_ll.o doubly_ll.o xored_ll.o stack.o queue.o deque.o priority_queue.o hash_table.o
+	cc $(OPTIONS) main.o sort.o singly_ll.o doubly_ll.o xored_ll.o stack.o queue.o deque.o priority_queue.o hash_table.o -o main
 
 main.o: main.c
 	cc $(OPTIONS) -c main.c -o main.o
@@ -9,14 +9,14 @@ main.o: main.c
 sort.o: sort.c
 	cc $(OPTIONS) -c sort.c -o sort.o
 
-link1_list.o: link1_list.c
-	cc $(OPTIONS) -c link1_list.c -o link1_list.o
+singly_ll.o: singly_ll.c
+	cc $(OPTIONS) -c singly_ll.c -o singly_ll.o
 
-link2_list.o: link2_list.c
-	cc $(OPTIONS) -c link2_list.c -o link2_list.o
+doubly_ll.o: doubly_ll.c
+	cc $(OPTIONS) -c doubly_ll.c -o doubly_ll.o
 
-link_xor_list.o: link_xor_list.c
-	cc $(OPTIONS) -c link_xor_list.c -o link_xor_list.o
+xored_ll.o: xored_ll.c
+	cc $(OPTIONS) -c xored_ll.c -o xored_ll.o
 
 deque.o: deque.c
 	cc $(OPTIONS) -c deque.c -o deque.o
