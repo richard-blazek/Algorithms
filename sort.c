@@ -92,6 +92,10 @@ void merge_sort(float *array, size_t length)
         memcpy(buffer, array, sizeof(float) * length);
         free(array);
     }
+    else
+    {
+        free(buffer);
+    }
 }
 
 static void insert_to_heap(float *heap, size_t old_size, float element)

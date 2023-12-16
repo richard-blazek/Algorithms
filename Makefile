@@ -1,7 +1,7 @@
-OPTIONS = -g -O0
+OPTIONS = -g -O0 -fsanitize=address
 
-main: main.o sort.o link1_list.o link2_list.o stack.o queue.o deque.o priority_queue.o hash_table.o
-	cc $(OPTIONS) main.o sort.o link1_list.o link2_list.o stack.o queue.o deque.o priority_queue.o hash_table.o -o main
+main: main.o sort.o link1_list.o link2_list.o link_xor_list.o stack.o queue.o deque.o priority_queue.o hash_table.o
+	cc $(OPTIONS) main.o sort.o link1_list.o link2_list.o link_xor_list.o stack.o queue.o deque.o priority_queue.o hash_table.o -o main
 
 main.o: main.c
 	cc $(OPTIONS) -c main.c -o main.o
@@ -14,6 +14,9 @@ link1_list.o: link1_list.c
 
 link2_list.o: link2_list.c
 	cc $(OPTIONS) -c link2_list.c -o link2_list.o
+
+link_xor_list.o: link_xor_list.c
+	cc $(OPTIONS) -c link_xor_list.c -o link_xor_list.o
 
 deque.o: deque.c
 	cc $(OPTIONS) -c deque.c -o deque.o

@@ -10,6 +10,7 @@
 #include "deque.h"
 #include "priority_queue.h"
 #include "hash_table.h"
+#include "link_xor_list.h"
 
 #define ARRAY_SIZE 55
 
@@ -137,6 +138,7 @@ void test_stack()
         printf("%.1f ", stack_pop(st));
     }
     putchar('\n');
+    stack_free(st);
 }
 
 void test_queue()
@@ -156,6 +158,7 @@ void test_queue()
         printf("%.1f ", queue_pop(q));
     }
     putchar('\n');
+    queue_free(q);
 }
 
 void test_deque()
@@ -205,6 +208,7 @@ void test_priority_queue()
         printf("%.3f) ", priority_queue_pop(priorityq));
     }
     putchar('\n');
+    priority_queue_free(priorityq);
 }
 
 void test_hash_table()
@@ -234,6 +238,29 @@ void test_hash_table()
     {
         printf("i: %lu | has: %d | value: %.0f\n", i, hash_table_has(ht, str + i), hash_table_get(ht, str + i));
     }
+    hash_table_free(ht);
+}
+
+void test_xor_linked_list()
+{
+    puts("Playing with the XOR linked list:");
+
+    link_xor_node *list = link_xor_list_init();
+    link_xor_list_insert_after(0, list, 1);
+    link_xor_list_insert_after(0, list, 2);
+    link_xor_list_insert_after(0, list, 3);
+    link_xor_list_insert_after(0, list, 4);
+
+    link_xor_node *current = link_xor_list_next(0, list), *prev = list;
+    while (current)
+    {
+        printf("%.0f ", link_xor_list_value(current));
+        link_xor_node *next = link_xor_list_next(prev, current);
+        prev = current;
+        current = next;
+    }
+    putchar('\n');
+    link_xor_list_free(list);
 }
 
 int main()
@@ -253,5 +280,6 @@ int main()
     test_deque();
     test_priority_queue();
     test_hash_table();
+    test_xor_linked_list();
     return 0;
 }
