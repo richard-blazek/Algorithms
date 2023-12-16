@@ -13,7 +13,7 @@
 
 #define ARRAY_SIZE 55
 
-void fill_with_random(char* output, size_t n)
+void fill_with_random(char *output, size_t n)
 {
     for (size_t i = 0; i < n; ++i)
     {
@@ -21,10 +21,10 @@ void fill_with_random(char* output, size_t n)
     }
 }
 
-void test_sort_float(void (*sort) (float*, size_t), const char* prompt)
+void test_sort_float(void (*sort)(float *, size_t), const char *prompt)
 {
     float array[ARRAY_SIZE];
-    fill_with_random((char*)array, ARRAY_SIZE * sizeof(float));
+    fill_with_random((char *)array, ARRAY_SIZE * sizeof(float));
     sort(array, ARRAY_SIZE);
 
     puts(prompt);
@@ -35,10 +35,10 @@ void test_sort_float(void (*sort) (float*, size_t), const char* prompt)
     putchar('\n');
 }
 
-void test_sort_uint8_t(void (*sort) (uint8_t*, size_t), const char* prompt)
+void test_sort_uint8_t(void (*sort)(uint8_t *, size_t), const char *prompt)
 {
     uint8_t array[ARRAY_SIZE];
-    fill_with_random((char*)array, ARRAY_SIZE);
+    fill_with_random((char *)array, ARRAY_SIZE);
     sort(array, ARRAY_SIZE);
 
     puts(prompt);
@@ -49,8 +49,7 @@ void test_sort_uint8_t(void (*sort) (uint8_t*, size_t), const char* prompt)
     putchar('\n');
 }
 
-
-void print_link1_list(link1_node* node)
+void print_link1_list(link1_node *node)
 {
     node = node->next;
     while (node)
@@ -61,9 +60,9 @@ void print_link1_list(link1_node* node)
     printf("\n");
 }
 
-void print_link2_list(link2_node* sentinel)
+void print_link2_list(link2_node *sentinel)
 {
-    link2_node* current = sentinel->next;
+    link2_node *current = sentinel->next;
     while (current != sentinel)
     {
         printf("%.2f ", current->value);
@@ -75,7 +74,7 @@ void print_link2_list(link2_node* sentinel)
 void test_link1_list()
 {
     puts("Playing with the singly linked list:");
-    link1_node* list = link1_list_init();
+    link1_node *list = link1_list_init();
     link1_list_insert_after(list, 1);
     link1_list_insert_after(list, 2);
     link1_list_insert_after(list, 3);
@@ -86,7 +85,7 @@ void test_link1_list()
     link1_list_insert_after(list, 8);
     link1_list_insert_after(list, 9);
     link1_list_insert_after(list, 10);
-    link1_node* it = list->next->next->next;
+    link1_node *it = list->next->next->next;
     link1_list_erase_after(it);
     it = link1_list_insert_after(it, 666);
     it = it->next;
@@ -100,7 +99,7 @@ void test_link1_list()
 void test_link2_list()
 {
     puts("Playing with the doubly linked list:");
-    link2_node* list = link2_list_init();
+    link2_node *list = link2_list_init();
     link2_list_insert_before(list, 1);
     link2_list_insert_before(list, 2);
     link2_list_insert_before(list, 3);
@@ -113,7 +112,7 @@ void test_link2_list()
     link2_list_insert_after(list, 10);
 
     link2_list_erase_before(list);
-    link2_node* it = list->next->next;
+    link2_node *it = list->next->next;
     it = link2_list_insert_after(it, 666);
     it = it->next;
     link2_list_erase(it);
@@ -124,7 +123,7 @@ void test_link2_list()
 void test_stack()
 {
     puts("Playing with the stack:");
-    stack* st = stack_init();
+    stack *st = stack_init();
     stack_push(st, 1);
     stack_push(st, 1);
     stack_push(st, 2);
@@ -143,7 +142,7 @@ void test_stack()
 void test_queue()
 {
     puts("Playing with the queue:");
-    queue* q = queue_init();
+    queue *q = queue_init();
     queue_push(q, 1);
     queue_push(q, 1);
     queue_push(q, 2);
@@ -162,7 +161,7 @@ void test_queue()
 void test_deque()
 {
     puts("Playing with the deque:");
-    deque* dq = deque_init(3);
+    deque *dq = deque_init(3);
     printf("%ld %ld\n", deque_length(dq), deque_capacity(dq));
     deque_push_back(dq, 1);
     deque_push_back(dq, 2);
@@ -190,7 +189,7 @@ void test_deque()
 void test_priority_queue()
 {
     puts("Playing with the priority queue:");
-    priority_queue* priorityq = priority_queue_init();
+    priority_queue *priorityq = priority_queue_init();
     priority_queue_push(priorityq, 1.0 / 4, 4);
     priority_queue_push(priorityq, 1.0 / 8, 8);
     priority_queue_push(priorityq, 1.0 / 1, 1);
@@ -211,9 +210,9 @@ void test_priority_queue()
 void test_hash_table()
 {
     puts("Playing with the hash table:");
-    hash_table* ht = hash_table_init();
-    
-    const char* str = "I don't want to live in the hearts of my countrymen; I want to live in my apartment.";
+    hash_table *ht = hash_table_init();
+
+    const char *str = "I don't want to live in the hearts of my countrymen; I want to live in my apartment.";
 
     for (size_t i = 0; i < 66; ++i)
     {

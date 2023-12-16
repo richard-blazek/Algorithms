@@ -1,10 +1,10 @@
 #include "sort.h"
 #include <string.h>
 
-static float* partition_by_random_pivot(float* begin, float* end)
+static float *partition_by_random_pivot(float *begin, float *end)
 {
-    float* pivot = begin + rand() % (end - begin);
-    for (float* ptr = begin; ptr < end; ++ptr)
+    float *pivot = begin + rand() % (end - begin);
+    for (float *ptr = begin; ptr < end; ++ptr)
     {
         if (*ptr < *pivot && ptr > pivot)
         {
@@ -15,7 +15,7 @@ static float* partition_by_random_pivot(float* begin, float* end)
             ++pivot;
         }
     }
-    for (float* ptr = end - 1; ptr >= begin; --ptr)
+    for (float *ptr = end - 1; ptr >= begin; --ptr)
     {
         if (*ptr > *pivot && ptr < pivot)
         {
@@ -29,13 +29,13 @@ static float* partition_by_random_pivot(float* begin, float* end)
     return pivot;
 }
 
-static void quick_sort_between(float* begin, float* end)
+static void quick_sort_between(float *begin, float *end)
 {
     if (end <= begin + 1)
     {
         return;
     }
-    float* pivot = partition_by_random_pivot(begin, end);
+    float *pivot = partition_by_random_pivot(begin, end);
     // Tail recurse with the greater partition
     if (pivot - begin > end - pivot - 1)
     {
@@ -49,13 +49,12 @@ static void quick_sort_between(float* begin, float* end)
     }
 }
 
-void quick_sort(float* begin, size_t length)
+void quick_sort(float *begin, size_t length)
 {
     quick_sort_between(begin, begin + length);
 }
 
-
-static void merge(float* begin1, float* end1, float* begin2, float* end2, float* dest)
+static void merge(float *begin1, float *end1, float *begin2, float *end2, float *dest)
 {
     while (begin1 != end1 && begin2 != end2)
     {
@@ -71,10 +70,10 @@ static void merge(float* begin1, float* end1, float* begin2, float* end2, float*
     }
 }
 
-void merge_sort(float* array, size_t length)
+void merge_sort(float *array, size_t length)
 {
-    float* buffer = malloc(sizeof(float) * length);
-    float* original = array;
+    float *buffer = malloc(sizeof(float) * length);
+    float *original = array;
     for (size_t partition = 1; partition < length; partition <<= 1)
     {
         for (size_t i = 0; i < length; i += partition << 1)
@@ -83,7 +82,7 @@ void merge_sort(float* array, size_t length)
             size_t end_i = mid_i + partition >= length ? length : mid_i + partition;
             merge(array + i, array + mid_i, array + mid_i, array + end_i, buffer + i);
         }
-        float* tmp = buffer;
+        float *tmp = buffer;
         buffer = array;
         array = tmp;
     }
@@ -95,8 +94,7 @@ void merge_sort(float* array, size_t length)
     }
 }
 
-
-static void insert_to_heap(float* heap, size_t old_size, float element)
+static void insert_to_heap(float *heap, size_t old_size, float element)
 {
     heap[old_size] = element;
     float tmp;
@@ -108,7 +106,7 @@ static void insert_to_heap(float* heap, size_t old_size, float element)
     }
 }
 
-static void build_heap(float* heap, size_t size)
+static void build_heap(float *heap, size_t size)
 {
     for (size_t i = 0; i < size; ++i)
     {
@@ -116,7 +114,7 @@ static void build_heap(float* heap, size_t size)
     }
 }
 
-static void unshift_heap(float* heap, size_t size)
+static void unshift_heap(float *heap, size_t size)
 {
     float tmp = heap[0];
     heap[0] = heap[size - 1];
@@ -144,7 +142,7 @@ static void unshift_heap(float* heap, size_t size)
     }
 }
 
-void heap_sort(float* array, size_t length)
+void heap_sort(float *array, size_t length)
 {
     build_heap(array, length);
     for (size_t i = length; i > 0; --i)
@@ -153,7 +151,7 @@ void heap_sort(float* array, size_t length)
     }
 }
 
-void counting_sort(uint8_t* array, size_t length)
+void counting_sort(uint8_t *array, size_t length)
 {
     size_t counts[256] = {0};
     for (size_t i = 0; i < length; ++i)
@@ -170,7 +168,7 @@ void counting_sort(uint8_t* array, size_t length)
 }
 #include <stdio.h>
 
-void radix_sort_generic(void* input, void* output, size_t length, size_t unit_size, uint8_t (*map) (void*))
+void radix_sort_generic(void *input, void *output, size_t length, size_t unit_size, uint8_t (*map)(void *))
 {
     size_t counts[256] = {0};
     size_t starts[256] = {0};
@@ -187,39 +185,39 @@ void radix_sort_generic(void* input, void* output, size_t length, size_t unit_si
 
     for (size_t i = 0; i < byte_count; i += unit_size)
     {
-        size_t* start = starts + map(input + i);
+        size_t *start = starts + map(input + i);
         memcpy(output + *start, input + i, unit_size);
         *start += unit_size;
     }
 }
 
-static uint32_t convert_float_to_int(float* value)
+static uint32_t convert_float_to_int(float *value)
 {
-    uint32_t i = *(uint32_t*)value;
+    uint32_t i = *(uint32_t *)value;
     uint32_t sign = i >> 31;
     return (((sign ^ 1) - 1) ^ (i | 0x80000000)) + sign;
 }
 
-static uint8_t get_float_byte0(void* value)
+static uint8_t get_float_byte0(void *value)
 {
     return convert_float_to_int(value);
 }
-static uint8_t get_float_byte1(void* value)
+static uint8_t get_float_byte1(void *value)
 {
     return convert_float_to_int(value) >> 8;
 }
-static uint8_t get_float_byte2(void* value)
+static uint8_t get_float_byte2(void *value)
 {
     return convert_float_to_int(value) >> 16;
 }
-static uint8_t get_float_byte3(void* value)
+static uint8_t get_float_byte3(void *value)
 {
     return convert_float_to_int(value) >> 24;
 }
 
-void radix_sort(float* array, size_t length)
+void radix_sort(float *array, size_t length)
 {
-    float* buffer = malloc(sizeof(float) * length);
+    float *buffer = malloc(sizeof(float) * length);
     radix_sort_generic(array, buffer, length, sizeof(float), get_float_byte0);
     radix_sort_generic(buffer, array, length, sizeof(float), get_float_byte1);
     radix_sort_generic(array, buffer, length, sizeof(float), get_float_byte2);
