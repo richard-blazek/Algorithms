@@ -31,7 +31,7 @@ float queue_top(queue *q)
 
 float queue_pop(queue *q)
 {
-    return link2_list_erase_before(q->list);
+    return link2_list_erase(q->list->prev);
 }
 
 void queue_free(queue *q)

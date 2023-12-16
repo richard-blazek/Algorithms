@@ -20,11 +20,6 @@ link2_node *link2_list_insert_after(link2_node *node, float new_value)
     return new_node;
 }
 
-link2_node *link2_list_insert_before(link2_node *node, float new_value)
-{
-    return link2_list_insert_after(node->prev, new_value);
-}
-
 float link2_list_erase(link2_node *node)
 {
     if (node->next != node)
@@ -36,16 +31,6 @@ float link2_list_erase(link2_node *node)
         return old_value;
     }
     return 0.0f;
-}
-
-float link2_list_erase_after(link2_node *node)
-{
-    return link2_list_erase(node->next);
-}
-
-float link2_list_erase_before(link2_node *node)
-{
-    return link2_list_erase(node->prev);
 }
 
 void link2_list_free(link2_node *sentinel)

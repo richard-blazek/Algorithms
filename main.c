@@ -100,18 +100,18 @@ void test_link2_list()
 {
     puts("Playing with the doubly linked list:");
     link2_node *list = link2_list_init();
-    link2_list_insert_before(list, 1);
-    link2_list_insert_before(list, 2);
-    link2_list_insert_before(list, 3);
-    link2_list_insert_before(list, 4);
-    link2_list_insert_before(list, 5);
+    link2_list_insert_after(list, 1);
+    link2_list_insert_after(list, 2);
+    link2_list_insert_after(list->prev, 3);
+    link2_list_insert_after(list->prev, 4);
+    link2_list_insert_after(list->prev, 5);
     link2_list_insert_after(list, 6);
     link2_list_insert_after(list, 7);
     link2_list_insert_after(list, 8);
     link2_list_insert_after(list, 9);
     link2_list_insert_after(list, 10);
 
-    link2_list_erase_before(list);
+    link2_list_erase(list->prev);
     link2_node *it = list->next->next;
     it = link2_list_insert_after(it, 666);
     it = it->next;
