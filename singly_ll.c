@@ -1,9 +1,25 @@
 #include "singly_ll.h"
 #include <stdlib.h>
 
+struct singly_ll
+{
+    float value;
+    singly_ll *next;
+};
+
 singly_ll *singly_ll_init()
 {
     return calloc(1, sizeof(singly_ll));
+}
+
+float singly_ll_value(singly_ll *node)
+{
+    return node->value;
+}
+
+singly_ll *singly_ll_next(singly_ll *node)
+{
+    return node->next;
 }
 
 singly_ll *singly_ll_insert_after(singly_ll *node, float new_value)

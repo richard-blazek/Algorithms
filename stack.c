@@ -21,12 +21,12 @@ void stack_push(stack *st, float value)
 
 bool stack_empty(stack *st)
 {
-    return !st->list->next;
+    return !singly_ll_next(st->list);
 }
 
 float stack_top(stack *st)
 {
-    return st->list->next->value;
+    return singly_ll_value(singly_ll_next(st->list));
 }
 
 float stack_pop(stack *st)

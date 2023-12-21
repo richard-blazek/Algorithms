@@ -52,11 +52,11 @@ void test_sort_uint8_t(void (*sort)(uint8_t *, size_t), const char *prompt)
 
 void print_singly_ll(singly_ll *node)
 {
-    node = node->next;
+    node = singly_ll_next(node);
     while (node)
     {
-        printf("%.2f ", node->value);
-        node = node->next;
+        printf("%.2f ", singly_ll_value(node));
+        node = singly_ll_next(node);
     }
     printf("\n");
 }
@@ -86,12 +86,12 @@ void test_singly_ll()
     singly_ll_insert_after(list, 8);
     singly_ll_insert_after(list, 9);
     singly_ll_insert_after(list, 10);
-    singly_ll *it = list->next->next->next;
+    singly_ll *it = singly_ll_next(singly_ll_next(singly_ll_next(list)));
     singly_ll_erase_after(it);
     it = singly_ll_insert_after(it, 666);
-    it = it->next;
+    it = singly_ll_next(it);
     singly_ll_insert_after(it, 1001);
-    it = it->next->next;
+    it = singly_ll_next(singly_ll_next(it));
     singly_ll_erase_after(it);
     print_singly_ll(list);
     singly_ll_free(list);
