@@ -22,9 +22,9 @@ float xored_ll_value(xored_ll *node)
     return node->value;
 }
 
-xored_ll *xored_ll_next(xored_ll *prev, xored_ll *current)
+xored_ll *xored_ll_next(xored_ll *other_side, xored_ll *current)
 {
-    return XOR(prev, current->link);
+    return XOR(other_side, current->link);
 }
 
 xored_ll *xored_ll_insert_after(xored_ll *prev, xored_ll *node, float new_value)

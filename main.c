@@ -63,11 +63,11 @@ void print_singly_ll(singly_ll *node)
 
 void print_doubly_ll(doubly_ll *sentinel)
 {
-    doubly_ll *current = sentinel->next;
+    doubly_ll *current = doubly_ll_next(sentinel);
     while (current != sentinel)
     {
-        printf("%.2f ", current->value);
-        current = current->next;
+        printf("%.2f ", doubly_ll_value(current));
+        current = doubly_ll_next(current);
     }
     printf("\n");
 }
@@ -103,19 +103,19 @@ void test_doubly_ll()
     doubly_ll *list = doubly_ll_init();
     doubly_ll_insert_after(list, 1);
     doubly_ll_insert_after(list, 2);
-    doubly_ll_insert_after(list->prev, 3);
-    doubly_ll_insert_after(list->prev, 4);
-    doubly_ll_insert_after(list->prev, 5);
+    doubly_ll_insert_after(doubly_ll_previous(list), 3);
+    doubly_ll_insert_after(doubly_ll_previous(list), 4);
+    doubly_ll_insert_after(doubly_ll_previous(list), 5);
     doubly_ll_insert_after(list, 6);
     doubly_ll_insert_after(list, 7);
     doubly_ll_insert_after(list, 8);
     doubly_ll_insert_after(list, 9);
     doubly_ll_insert_after(list, 10);
 
-    doubly_ll_erase(list->prev);
-    doubly_ll *it = list->next->next;
+    doubly_ll_erase(doubly_ll_previous(list));
+    doubly_ll *it = doubly_ll_next(doubly_ll_next(list));
     it = doubly_ll_insert_after(it, 666);
-    it = it->next;
+    it = doubly_ll_next(it);
     doubly_ll_erase(it);
     print_doubly_ll(list);
     doubly_ll_free(list);

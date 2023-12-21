@@ -1,12 +1,33 @@
 #include "doubly_ll.h"
 #include <stdlib.h>
 
+struct doubly_ll
+{
+    float value;
+    doubly_ll *prev, *next;
+};
+
 doubly_ll *doubly_ll_init()
 {
     doubly_ll *sentinel = malloc(sizeof(doubly_ll));
     sentinel->next = sentinel;
     sentinel->prev = sentinel;
     return sentinel;
+}
+
+float doubly_ll_value(doubly_ll *node)
+{
+    return node->value;
+}
+
+doubly_ll *doubly_ll_next(doubly_ll *node)
+{
+    return node->next;
+}
+
+doubly_ll *doubly_ll_previous(doubly_ll *node)
+{
+    return node->prev;
 }
 
 doubly_ll *doubly_ll_insert_after(doubly_ll *node, float new_value)

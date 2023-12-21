@@ -21,17 +21,17 @@ void queue_push(queue *q, float value)
 
 bool queue_empty(queue *q)
 {
-    return q->list->next == q->list;
+    return doubly_ll_next(q->list) == q->list;
 }
 
 float queue_top(queue *q)
 {
-    return q->list->prev->value;
+    return doubly_ll_value(doubly_ll_previous(q->list));
 }
 
 float queue_pop(queue *q)
 {
-    return doubly_ll_erase(q->list->prev);
+    return doubly_ll_erase(doubly_ll_previous(q->list));
 }
 
 void queue_free(queue *q)
