@@ -170,7 +170,6 @@ void counting_sort(uint8_t *array, size_t length)
         }
     }
 }
-#include <stdio.h>
 
 void radix_sort_generic(void *input, void *output, size_t length, size_t unit_size, uint8_t (*map)(void *))
 {
