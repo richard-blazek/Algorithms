@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-void quick_sort(float *begin, size_t length);
+void quick_sort(float *array, size_t length);
 void merge_sort(float *array, size_t length);
 void heap_sort(float *array, size_t length);
 void counting_sort(uint8_t *array, size_t length);

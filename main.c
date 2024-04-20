@@ -14,18 +14,18 @@
 
 #define ARRAY_SIZE 55
 
-void fill_with_random(char *output, size_t n)
+void fill_random_float(float (*output)[ARRAY_SIZE])
 {
-    for (size_t i = 0; i < n; ++i)
+    for (size_t i = 0; i < ARRAY_SIZE; ++i)
     {
-        output[i] = rand();
+        (*output)[i] = (rand() / (float)RAND_MAX - 0.5) * 100.0;
     }
 }
 
 void test_sort_float(void (*sort)(float *, size_t), const char *prompt)
 {
     float array[ARRAY_SIZE];
-    fill_with_random((char *)array, ARRAY_SIZE * sizeof(float));
+    fill_random_float(&array);
     sort(array, ARRAY_SIZE);
 
     puts(prompt);
@@ -36,10 +36,18 @@ void test_sort_float(void (*sort)(float *, size_t), const char *prompt)
     putchar('\n');
 }
 
+void fill_random_uint8_t(uint8_t (*output)[ARRAY_SIZE])
+{
+    for (size_t i = 0; i < ARRAY_SIZE; ++i)
+    {
+        (*output)[i] = rand();
+    }
+}
+
 void test_sort_uint8_t(void (*sort)(uint8_t *, size_t), const char *prompt)
 {
     uint8_t array[ARRAY_SIZE];
-    fill_with_random((char *)array, ARRAY_SIZE);
+    fill_random_uint8_t(&array);
     sort(array, ARRAY_SIZE);
 
     puts(prompt);

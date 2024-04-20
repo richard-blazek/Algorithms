@@ -1,157 +1,122 @@
 #include "sort.h"
 #include <string.h>
 
-static float *partition_by_random_pivot(float *begin, float *end)
+static size_t partition(float *array, size_t length)
 {
-    float *pivot = begin + rand() % (end - begin);
-    for (float *ptr = begin; ptr < end; ++ptr)
+    size_t pivot = 0;
+    for (size_t i = 1; i < length; ++i)
     {
-        if (*ptr < *pivot && ptr > pivot)
+        if (array[i] < array[pivot])
         {
-            float tmp = *pivot;
-            *pivot = *ptr;
-            *ptr = pivot[1];
-            pivot[1] = tmp;
+            float tmp = array[pivot];
+            array[pivot] = array[i];
+            array[i] = array[pivot + 1];
+            array[pivot + 1] = tmp;
             ++pivot;
-        }
-    }
-    for (float *ptr = end - 1; ptr >= begin; --ptr)
-    {
-        if (*ptr > *pivot && ptr < pivot)
-        {
-            float tmp = *pivot;
-            *pivot = *ptr;
-            *ptr = pivot[-1];
-            pivot[-1] = tmp;
-            --pivot;
         }
     }
     return pivot;
 }
 
-static void quick_sort_between(float *begin, float *end)
+void quick_sort(float *array, size_t length)
 {
-    if (end <= begin + 1)
+    size_t pivot = partition(array, length);
+    if (pivot > 1)
     {
-        return;
+        quick_sort(array, pivot);
     }
-    float *pivot = partition_by_random_pivot(begin, end);
-    // Tail recurse with the greater partition
-    if (pivot - begin > end - pivot - 1)
+    if (length - pivot - 1 > 1)
     {
-        quick_sort_between(pivot + 1, end);
-        quick_sort_between(begin, pivot);
-    }
-    else
-    {
-        quick_sort_between(begin, pivot);
-        quick_sort_between(pivot + 1, end);
+        quick_sort(array + pivot + 1, length - pivot - 1);
     }
 }
 
-void quick_sort(float *begin, size_t length)
+static void merge(float *dst, float *src1, float *src2, float *end1, float *end2)
 {
-    quick_sort_between(begin, begin + length);
+    while (src1 < end1 && src2 < end2)
+    {
+        *dst++ = *src1 < *src2 ? *src1++ : *src2++;
+    }
+    while (src1 < end1)
+    {
+        *dst++ = *src1++;
+    }
+    while (src2 < end2)
+    {
+        *dst++ = *src2++;
+    }
 }
 
-static void merge(float *begin1, float *end1, float *begin2, float *end2, float *dest)
+static size_t min(size_t i, size_t j)
 {
-    while (begin1 != end1 && begin2 != end2)
-    {
-        *dest++ = *begin1 <= *begin2 ? *begin1++ : *begin2++;
-    }
-    while (begin1 != end1)
-    {
-        *dest++ = *begin1++;
-    }
-    while (begin2 != end2)
-    {
-        *dest++ = *begin2++;
-    }
+    return i < j ? i : j;
 }
 
 void merge_sort(float *array, size_t length)
 {
-    float *buffer = malloc(sizeof(float) * length);
-    float *original = array;
-    for (size_t partition = 1; partition < length; partition <<= 1)
+    float *tmp = malloc(sizeof(float) * length);
+    int in_tmp = 0;
+    for (size_t sz = 1; sz < length; sz *= 2)
     {
-        for (size_t i = 0; i < length; i += partition << 1)
+        float *src = in_tmp ? tmp : array, *dst = in_tmp ? array : tmp;
+        for (size_t i = 0; i < length; i += 2 * sz)
         {
-            size_t mid_i = i + partition >= length ? length : i + partition;
-            size_t end_i = mid_i + partition >= length ? length : mid_i + partition;
-            merge(array + i, array + mid_i, array + mid_i, array + end_i, buffer + i);
+            merge(dst + i, src + i, src + i + sz, src + min(i + sz, length), src + min(i + 2 * sz, length));
         }
-        float *tmp = buffer;
-        buffer = array;
-        array = tmp;
+        in_tmp = !in_tmp;
     }
+    if (in_tmp)
+    {
+        memcpy(array, tmp, sizeof(float) * length);
+    }
+    free(tmp);
+}
 
-    if (original == buffer)
+static void swap(float *x, float *y)
+{
+    float tmp = *x;
+    *x = *y;
+    *y = tmp;
+}
+
+static void heap_insert(float *heap, size_t length, float value)
+{
+    heap[length] = value;
+    for (size_t i = length; i > 0 && heap[i] > heap[(i - 1) / 2]; i = (i - 1) / 2)
     {
-        memcpy(buffer, array, sizeof(float) * length);
-        free(array);
-    }
-    else
-    {
-        free(buffer);
+        swap(&heap[i], &heap[(i - 1) / 2]);
     }
 }
 
-static void insert_to_heap(float *heap, size_t old_size, float element)
+static float heap_remove(float *heap, size_t length)
 {
-    heap[old_size] = element;
-    float tmp;
-    for (size_t i = old_size, parent = (i - 1) >> 1; i > 0 && heap[parent] < heap[i]; i = parent, parent = (i - 1) >> 1)
-    {
-        tmp = heap[i];
-        heap[i] = heap[parent];
-        heap[parent] = tmp;
-    }
-}
+    --length;
+    float result = heap[0];
+    heap[0] = heap[length];
 
-static void build_heap(float *heap, size_t size)
-{
-    for (size_t i = 0; i < size; ++i)
+    for (size_t i = 0;;)
     {
-        insert_to_heap(heap, i, heap[i]);
-    }
-}
-
-static void unshift_heap(float *heap, size_t size)
-{
-    float tmp = heap[0];
-    heap[0] = heap[size - 1];
-    heap[size - 1] = tmp;
-
-    size_t i = 0;
-    size -= 1;
-    for (;;)
-    {
-        size_t left = i << 1 | 1, right = (i << 1) + 2;
-        if (left >= size)
+        size_t left = i * 2 + 1, right = i * 2 + 2;
+        size_t next = left < length && right < length && heap[right] > heap[left] ? right : left;
+        if (next >= length || heap[i] >= heap[next])
         {
             break;
         }
-        size_t child = right < size && heap[right] > heap[left] ? right : left;
-        if (heap[child] <= heap[i])
-        {
-            break;
-        }
-
-        tmp = heap[i];
-        heap[i] = heap[child];
-        heap[child] = tmp;
-        i = child;
+        swap(&heap[i], &heap[next]);
+        i = next;
     }
+    return result;
 }
 
 void heap_sort(float *array, size_t length)
 {
-    build_heap(array, length);
-    for (size_t i = length; i > 0; --i)
+    for (size_t i = 0; i < length; ++i)
     {
-        unshift_heap(array, i);
+        heap_insert(array, i, array[i]);
+    }
+    for (size_t i = 0; i < length; ++i)
+    {
+        array[length - i - 1] = heap_remove(array, length - i);
     }
 }
 
