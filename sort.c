@@ -1,4 +1,5 @@
 #include "sort.h"
+#include <stdbool.h>
 #include <string.h>
 
 static size_t partition(float *array, size_t length)
@@ -55,7 +56,7 @@ static size_t min(size_t i, size_t j)
 void merge_sort(float *array, size_t length)
 {
     float *tmp = malloc(sizeof(float) * length);
-    int in_tmp = 0;
+    bool in_tmp = false;
     for (size_t sz = 1; sz < length; sz *= 2)
     {
         float *src = in_tmp ? tmp : array, *dst = in_tmp ? array : tmp;
@@ -132,6 +133,51 @@ void counting_sort(uint8_t *array, size_t length)
         for (size_t count = counts[i]; count > 0; --count, ++dest)
         {
             array[dest] = i;
+        }
+    }
+}
+
+void bubble_sort(float *array, size_t length)
+{
+    bool swapped = false;
+    do
+    {
+        swapped = false;
+        for (size_t i = 0; i < length - 1; ++i)
+        {
+            if (array[i] > array[i + 1])
+            {
+                swap(&array[i], &array[i + 1]);
+                swapped = true;
+            }
+        }
+        --length;
+    } while (swapped);
+}
+
+void selection_sort(float *array, size_t length)
+{
+    for (size_t i = 0; i < length; ++i)
+    {
+        size_t min = i;
+        for (size_t j = i + 1; j < length; ++j)
+        {
+            if (array[j] < array[min])
+            {
+                min = j;
+            }
+        }
+        swap(&array[i], &array[min]);
+    }
+}
+
+void insertion_sort(float *array, size_t length)
+{
+    for (size_t i = 1; i < length; ++i)
+    {
+        for (size_t dst = i; dst > 0 && array[dst] < array[dst - 1]; --dst)
+        {
+            swap(&array[dst], &array[dst - 1]);
         }
     }
 }

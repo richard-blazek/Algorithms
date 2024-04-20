@@ -279,6 +279,9 @@ int main()
 {
     srand(time(0));
 
+    test_sort_float(bubble_sort, "Bubble sort:");
+    test_sort_float(insertion_sort, "Insertion sort:");
+    test_sort_float(selection_sort, "Selection sort:");
     test_sort_float(quick_sort, "Quick sort:");
     test_sort_float(merge_sort, "Merge sort:");
     test_sort_float(heap_sort, "Heap sort:");
