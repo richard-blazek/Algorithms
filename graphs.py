@@ -1,3 +1,5 @@
+INF = float('inf')
+
 class DisjointSet:
     def __init__(self, size):
         self._parent = list(range(size))
@@ -22,6 +24,46 @@ class DisjointSet:
     
     def is_connected(self, v1, v2):
         return self.find(v1) == self.find(v2)
+
+class IndexHeap:
+    def __init__(self, size: int, default: float):
+        self._heap = [(i, default) for i in range(size)]
+        self._map = list(range(size))
+
+    def _bubble_up(self, i):
+        while (parent := (i - 1) // 2) >= 0 and self._heap[i][1] <= self._heap[parent][1]:
+            self._heap[i], self._heap[parent] = self._heap[parent], self._heap[i]
+            self._map[self._heap[i][0]] = i
+            self._map[self._heap[parent][0]] = parent
+            i = parent
+
+    def _bubble_down(self, i):
+        while (child := i * 2 + 1) < len(self._heap):
+            if child + 1 < len(self._heap) and self._heap[child + 1][1] < self._heap[child][1]:
+                child += 1
+
+            if self._heap[child][1] >= self._heap[i][1]:
+                break
+
+            self._heap[i], self._heap[child] = self._heap[child], self._heap[i]
+            self._map[self._heap[i][0]] = i
+            self._map[self._heap[child][0]] = child
+            i = child
+
+    def top(self):
+        return self._heap[0][0]
+
+    def update(self, index, new_value):
+        i = self._map[index]
+        old_value = self._heap[i][1]
+        self._heap[i][1] = new_value
+        if new_value < old_value:
+            self._bubble_up(i)
+        elif new_value < old_value:
+            self._bubble_down(i)
+
+    def value_of(self, index):
+        return self._heap[self._map[index]][1]
 
 class Graph:
     def __init__(self, edges: list[list[tuple[int, float]]]):
@@ -96,5 +138,30 @@ class Graph:
             if not ds.is_connected(start, end):
                 ds.union(start, end)
                 edges[start].append((end, weight))
+
+        return Graph(edges)
+    
+    def dijkstra_tree(self, start):
+        edge_start = [-1] * self.vertex_count
+        edge_weight = [-1] * self.vertex_count
+        edges = [[] for _ in range(self.vertex_count)]
+
+        visited = [False] * self.vertex_count
+        vertices = IndexHeap(self.vertex_count, INF)
+        vertices.update(start, 0)
+
+        while vertices.value_of(vertices.top()) < INF:
+            current = vertices.top()
+            visited[current] = True
+            vertices.update(current, INF)
+
+            if edge_start[current] != -1:
+                edges[edge_start[current]].append((current, edge_weight[current]))
+
+            for n, weight in self._edges[current]:
+                if not visited[n] and vertices.value_of(current) + weight < vertices.value_of(n):
+                    vertices.update(n, vertices.value_of(current) + weight)
+                    edge_start[n] = current
+                    edge_weight[n] = weight
 
         return Graph(edges)
