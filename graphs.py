@@ -27,14 +27,16 @@ class DisjointSet:
 
 class IndexHeap:
     def __init__(self, size: int, default: float):
-        self._heap = [(i, default) for i in range(size)]
+        self._heap = [[i, default] for i in range(size)]
         self._map = list(range(size))
+    
+    def _swap(self, i, j):
+        self._map[self._heap[i][0]], self._map[self._heap[j][0]] = self._map[self._heap[j][0]], self._map[self._heap[i][0]]
+        self._heap[i], self._heap[j] = self._heap[j], self._heap[i]
 
     def _bubble_up(self, i):
         while (parent := (i - 1) // 2) >= 0 and self._heap[i][1] <= self._heap[parent][1]:
-            self._heap[i], self._heap[parent] = self._heap[parent], self._heap[i]
-            self._map[self._heap[i][0]] = i
-            self._map[self._heap[parent][0]] = parent
+            self._swap(i, parent)
             i = parent
 
     def _bubble_down(self, i):
@@ -45,9 +47,7 @@ class IndexHeap:
             if self._heap[child][1] >= self._heap[i][1]:
                 break
 
-            self._heap[i], self._heap[child] = self._heap[child], self._heap[i]
-            self._map[self._heap[i][0]] = i
-            self._map[self._heap[child][0]] = child
+            self._swap(i, child)
             i = child
 
     def top(self):
@@ -59,7 +59,7 @@ class IndexHeap:
         self._heap[i][1] = new_value
         if new_value < old_value:
             self._bubble_up(i)
-        elif new_value < old_value:
+        elif new_value > old_value:
             self._bubble_down(i)
 
     def value_of(self, index):
@@ -76,9 +76,13 @@ class Graph:
         for start in range(len(matrix)):
             for end in range(len(matrix)):
                 if matrix[start][end]:
-                    edges[start].append((end, weights[start][end]))
+                    edges[start].append([end, weights[start][end]])
 
         return Graph(edges)
+    
+    @staticmethod
+    def of_size(size: int):
+        return Graph([[] for _ in range(size)])
 
     @property
     def vertex_count(self):
@@ -89,6 +93,13 @@ class Graph:
 
     def edge_weight(self, start: int, end: int):
         return self._edges[start][end][1]
+    
+    def add_edge(self, start: int, end: int, weight: float):
+        for edge in self._edges[start]:
+            if edge[0] == end:
+                edge[1] = weight
+                return
+        self._edges[start].append([end, weight])
 
     def dfs(self, function):
         visited = [False] * self.vertex_count
@@ -128,19 +139,22 @@ class Graph:
         self.dfs(inc)
         return count == self.vertex_count
 
+    @property
+    def edges(self):
+        return [(weight, start, end) for start in range(self.vertex_count) for end, weight in self._edges[start]]
+
     # Kruskal's algorithm
     def min_spanning_tree(self):
-        all_edges = sorted((weight, start, end) for start in range(self.vertex_count) for end, weight in self._edges[start])
         ds = DisjointSet(self.vertex_count)
 
         edges = [[] for _ in range(self.vertex_count)]
-        for weight, start, end in all_edges:
+        for weight, start, end in sorted(self.edges):
             if not ds.is_connected(start, end):
                 ds.union(start, end)
                 edges[start].append((end, weight))
 
         return Graph(edges)
-    
+
     def dijkstra_tree(self, start):
         edge_start = [-1] * self.vertex_count
         edge_weight = [-1] * self.vertex_count
@@ -152,16 +166,29 @@ class Graph:
 
         while vertices.value_of(vertices.top()) < INF:
             current = vertices.top()
+            print('current=', current)
             visited[current] = True
-            vertices.update(current, INF)
 
             if edge_start[current] != -1:
                 edges[edge_start[current]].append((current, edge_weight[current]))
 
             for n, weight in self._edges[current]:
                 if not visited[n] and vertices.value_of(current) + weight < vertices.value_of(n):
+                    print('neighbour=', n, 'distance: ', vertices.value_of(current) + weight)
                     vertices.update(n, vertices.value_of(current) + weight)
                     edge_start[n] = current
                     edge_weight[n] = weight
 
+            vertices.update(current, INF)
+            print(vertices._heap, vertices._map)
+
         return Graph(edges)
+
+    def __repr__(self) -> str:
+        return f"Graph({repr(self._edges)})"
+
+    def __str__(self) -> str:
+        s = f'Graph of {self.vertex_count} vertices\n'
+        s += 'Edges:\n'
+        s += '\n'.join(f'{start} -> {end} (weight {weight})' for weight, start, end in self.edges)
+        return s
