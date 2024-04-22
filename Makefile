@@ -1,7 +1,7 @@
 OPTIONS = -g -O0 -fsanitize=address
 
-main: main.o sort.o singly_ll.o doubly_ll.o xored_ll.o stack.o queue.o deque.o priority_queue.o hash_table.o
-	cc $(OPTIONS) main.o sort.o singly_ll.o doubly_ll.o xored_ll.o stack.o queue.o deque.o priority_queue.o hash_table.o -o main
+main: main.o sort.o singly_ll.o doubly_ll.o xored_ll.o stack.o queue.o deque.o priority_queue.o hash_table.o disjoint_set.o
+	cc $(OPTIONS) main.o sort.o singly_ll.o doubly_ll.o xored_ll.o stack.o queue.o deque.o priority_queue.o hash_table.o disjoint_set.o -o main
 
 main.o: main.c
 	cc $(OPTIONS) -c main.c -o main.o
@@ -32,6 +32,9 @@ priority_queue.o: priority_queue.c
 
 hash_table.o: hash_table.c
 	cc $(OPTIONS) -c hash_table.c -o hash_table.o
+
+disjoint_set.o: disjoint_set.c
+	cc $(OPTIONS) -c disjoint_set.c -o disjoint_set.o
 
 clean:
 	rm -rf *.o main
