@@ -21,12 +21,11 @@ disjoint_set *disjoint_set_init(size_t capacity)
 
 size_t disjoint_set_find(disjoint_set *set, size_t vertex)
 {
-    size_t *parents = (size_t *)set;
-    if (parents[vertex] != vertex)
+    if (set->parents[vertex] != vertex)
     {
-        parents[vertex] = disjoint_set_find(set, parents[vertex]);
+        set->parents[vertex] = disjoint_set_find(set, set->parents[vertex]);
     }
-    return parents[vertex];
+    return set->parents[vertex];
 }
 
 void disjoint_set_union(disjoint_set *set, size_t v1, size_t v2)
