@@ -4,7 +4,7 @@ class DisjointSet:
     def __init__(self, size):
         self._parent = list(range(size))
         self._rank = [1] * size
-    
+
     def find(self, vertex):
         if self._parent[vertex] != vertex:
             self._parent[vertex] = self.find(self._parent[vertex])
@@ -21,7 +21,7 @@ class DisjointSet:
         else:
             self._parent[v2] = v1
             self._rank[v1] += self._rank[v2]
-    
+
     def is_connected(self, v1, v2):
         return self.find(v1) == self.find(v2)
 
@@ -29,7 +29,7 @@ class IndexHeap:
     def __init__(self, size: int, default: float):
         self._heap = [[i, default] for i in range(size)]
         self._map = list(range(size))
-    
+
     def _swap(self, i, j):
         self._map[self._heap[i][0]], self._map[self._heap[j][0]] = self._map[self._heap[j][0]], self._map[self._heap[i][0]]
         self._heap[i], self._heap[j] = self._heap[j], self._heap[i]
@@ -50,9 +50,6 @@ class IndexHeap:
             self._swap(i, child)
             i = child
 
-    def top(self):
-        return self._heap[0][0]
-
     def update(self, index, new_value):
         i = self._map[index]
         old_value = self._heap[i][1]
@@ -64,6 +61,19 @@ class IndexHeap:
 
     def value_of(self, index):
         return self._heap[self._map[index]][1]
+
+    def pop(self):
+        self._swap(0, len(self._heap) - 1)
+        index, value = self._heap.pop()
+        self._map[index] = None
+        self._bubble_down(0)
+        return index, value
+
+    def empty(self):
+        return not self._heap
+    
+    def has(self, index):
+        return self._map[index] is not None
 
 class Graph:
     def __init__(self, edges: list[list[tuple[int, float]]]):
@@ -79,7 +89,7 @@ class Graph:
                     edges[start].append([end, weights[start][end]])
 
         return Graph(edges)
-    
+
     @staticmethod
     def of_size(size: int):
         return Graph([[] for _ in range(size)])
@@ -93,13 +103,17 @@ class Graph:
 
     def edge_weight(self, start: int, end: int):
         return self._edges[start][end][1]
-    
-    def add_edge(self, start: int, end: int, weight: float):
+
+    def add_edge(self, start: int, end: int, weight: float = 1.0):
         for edge in self._edges[start]:
             if edge[0] == end:
                 edge[1] = weight
                 return
         self._edges[start].append([end, weight])
+
+    def add_bidirectional_edge(self, v1: int, v2: int, weight: float = 1.0):
+        self.add_edge(v1, v2, weight)
+        self.add_edge(v2, v1, weight)
 
     def dfs(self, function):
         visited = [False] * self.vertex_count
@@ -160,27 +174,20 @@ class Graph:
         edge_weight = [-1] * self.vertex_count
         edges = [[] for _ in range(self.vertex_count)]
 
-        visited = [False] * self.vertex_count
         vertices = IndexHeap(self.vertex_count, INF)
         vertices.update(start, 0)
 
-        while vertices.value_of(vertices.top()) < INF:
-            current = vertices.top()
-            print('current=', current)
-            visited[current] = True
+        while not vertices.empty():
+            current, current_distance = vertices.pop()
 
             if edge_start[current] != -1:
                 edges[edge_start[current]].append((current, edge_weight[current]))
 
             for n, weight in self._edges[current]:
-                if not visited[n] and vertices.value_of(current) + weight < vertices.value_of(n):
-                    print('neighbour=', n, 'distance: ', vertices.value_of(current) + weight)
-                    vertices.update(n, vertices.value_of(current) + weight)
+                if vertices.has(n) and current_distance + weight < vertices.value_of(n):
+                    vertices.update(n, current_distance + weight)
                     edge_start[n] = current
                     edge_weight[n] = weight
-
-            vertices.update(current, INF)
-            print(vertices._heap, vertices._map)
 
         return Graph(edges)
 
@@ -190,5 +197,5 @@ class Graph:
     def __str__(self) -> str:
         s = f'Graph of {self.vertex_count} vertices\n'
         s += 'Edges:\n'
-        s += '\n'.join(f'{start} -> {end} (weight {weight})' for weight, start, end in self.edges)
+        s += '\n'.join(f'    {start} -> {end} (weight {weight})' for weight, start, end in self.edges)
         return s
