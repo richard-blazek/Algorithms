@@ -50,28 +50,26 @@ class PriorityQueue:
             self._swap(i, child)
             i = child
 
-    def update(self, index: int, new_value):
-        i = self._map[index]
-        old_value = self._heap[i][1]
-        self._heap[i][1] = new_value
-        if new_value < old_value:
-            self._bubble_up(i)
-        elif new_value > old_value:
-            self._bubble_down(i)
+    def priority(self, idx: int):
+        return self._heap[self._map[idx]][1]
 
-    def value_of(self, index: int):
-        return self._heap[self._map[index]][1]
+    def decrease_priority(self, idx: int, priority: float):
+        self._heap[self._map[idx]][1] = priority
+        self._bubble_up(self._map[idx])
+    
+    def top(self):
+        return self._heap[0]
 
     def pop(self):
         self._swap(0, len(self._heap) - 1)
-        index, value = self._heap.pop()
+        index, priority = self._heap.pop()
         self._map[index] = None
         self._bubble_down(0)
-        return index, value
+        return index, priority
 
-    def add(self, index: int, value):
-        self._heap.append([index, value])
-        self._map[index] = len(self._heap) - 1
+    def add(self, idx: int, priority: float):
+        self._heap.append([idx, priority])
+        self._map[idx] = len(self._heap) - 1
         self._bubble_up(len(self._heap) - 1)
 
     def empty(self):
@@ -170,9 +168,9 @@ class Graph:
                 edges[start].append((end, weight))
 
         return Graph(edges)
-    
+
     @staticmethod
-    def _build_path(end: int, start: int, visited_from: list[int], distance: float):
+    def _build_path(start: int, end: int, visited_from: list[int], distance: float):
         path = [end]
         while end != start:
             end = visited_from[end]
@@ -180,28 +178,24 @@ class Graph:
         path.reverse()
         return path, distance
 
-    def dijkstra(self, start, end):
+    def dijkstra(self, start: int, end: int):
         visited_from = [-1] * self.vertex_count
 
         vertices = PriorityQueue(self.vertex_count)
         for i in range(self.vertex_count):
             vertices.add(i, 0 if i == start else INF)
 
-        while True:
-            if vertices.empty():
-                return None
-
+        while not vertices.empty() and vertices.top()[1] != INF:
             current, distance = vertices.pop()
-            if distance == INF:
-                return None
 
             if current == end:
-                return Graph._build_path(end, start, visited_from, distance)
+                return Graph._build_path(start, end, visited_from, distance)
 
             for n, weight in self._edges[current]:
-                if vertices.has(n) and distance + weight < vertices.value_of(n):
-                    vertices.update(n, distance + weight)
+                if vertices.has(n) and distance + weight < vertices.priority(n):
+                    vertices.decrease_priority(n, distance + weight)
                     visited_from[n] = current
+        return None
 
     def __repr__(self) -> str:
         return f"Graph({repr(self._edges)})"
