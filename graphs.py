@@ -101,9 +101,6 @@ class Graph:
     def neighbours_of(self, vertex: int):
         return [neighbour for neighbour, _ in self._edges[vertex]]
 
-    def edge_weight(self, start: int, end: int):
-        return self._edges[start][end][1]
-
     def add_edge(self, start: int, end: int, weight: float = 1.0):
         for edge in self._edges[start]:
             if edge[0] == end:
@@ -168,28 +165,37 @@ class Graph:
                 edges[start].append((end, weight))
 
         return Graph(edges)
+    
+    @staticmethod
+    def _build_path(end: int, start: int, visited_from: list[int], distance: float):
+        path = [end]
+        while end != start:
+            end = visited_from[end]
+            path.append(end)
+        path.reverse()
+        return path, distance
 
-    def dijkstra_tree(self, start):
-        edge_start = [-1] * self.vertex_count
-        edge_weight = [-1] * self.vertex_count
-        edges = [[] for _ in range(self.vertex_count)]
+    def dijkstra(self, start, end):
+        visited_from = [-1] * self.vertex_count
 
         vertices = IndexHeap(self.vertex_count, INF)
         vertices.update(start, 0)
 
-        while not vertices.empty():
-            current, current_distance = vertices.pop()
+        while True:
+            if vertices.empty():
+                return None
 
-            if edge_start[current] != -1:
-                edges[edge_start[current]].append((current, edge_weight[current]))
+            current, distance = vertices.pop()
+            if distance == INF:
+                return None
+
+            if current == end:
+                return Graph._build_path(end, start, visited_from, distance)
 
             for n, weight in self._edges[current]:
-                if vertices.has(n) and current_distance + weight < vertices.value_of(n):
-                    vertices.update(n, current_distance + weight)
-                    edge_start[n] = current
-                    edge_weight[n] = weight
-
-        return Graph(edges)
+                if vertices.has(n) and distance + weight < vertices.value_of(n):
+                    vertices.update(n, distance + weight)
+                    visited_from[n] = current
 
     def __repr__(self) -> str:
         return f"Graph({repr(self._edges)})"
