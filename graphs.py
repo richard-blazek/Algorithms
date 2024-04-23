@@ -246,10 +246,13 @@ class Graph:
                     vertices.decrease_priority(n, new_priority)
                     visited_from[n] = current
         return None
+    
+    def _vertex_with_no_outgoing_edges(self):
+        return next(i for i in range(self.vertex_count) if not any(True for edges in self._edges for end, _ in edges if end == i))
 
-    def topological_sort(self, start=0):
+    def topological_sort(self):
         vertices = []
-        self.dfs(start=start, postorder=vertices.append)
+        self.dfs(start=self._vertex_with_no_outgoing_edges(), postorder=vertices.append)
         vertices.reverse()
         return vertices
 
