@@ -56,7 +56,7 @@ class PriorityQueue:
     def decrease_priority(self, idx: int, priority: float):
         self._heap[self._map[idx]][1] = priority
         self._bubble_up(self._map[idx])
-    
+
     def top(self):
         return self._heap[0]
 
@@ -115,6 +115,9 @@ class Graph:
         self.add_edge(v1, v2, weight)
         self.add_edge(v2, v1, weight)
 
+    def edge_weight(self, start: int, end: int):
+        return next((weight for vertex, weight in self._edges[start] if vertex == end), None)
+
     def dfs(self, function):
         visited = [False] * self.vertex_count
 
@@ -170,30 +173,76 @@ class Graph:
         return Graph(edges)
 
     @staticmethod
-    def _build_path(start: int, end: int, visited_from: list[int], distance: float):
+    def _build_path(start: int, end: int, visited_from: list[int]):
         path = [end]
         while end != start:
             end = visited_from[end]
             path.append(end)
         path.reverse()
-        return path, distance
+        return path
 
-    def dijkstra(self, start: int, end: int):
-        visited_from = [-1] * self.vertex_count
+    def path_length(self, path: list[int]) -> float:
+        return sum(self.edge_weight(src, dst) for src, dst in zip(path, path[1:]))
 
+    def dijkstra(self, start: int, goal: int):
+        visited_from = [None] * self.vertex_count
         vertices = PriorityQueue(self.vertex_count)
         for i in range(self.vertex_count):
-            vertices.add(i, 0 if i == start else INF)
+            vertices.add(i, INF)
+
+        visited_from[start] = start
+        vertices.decrease_priority(start, 0)
 
         while not vertices.empty() and vertices.top()[1] != INF:
             current, distance = vertices.pop()
 
-            if current == end:
-                return Graph._build_path(start, end, visited_from, distance)
+            if current == goal:
+                return Graph._build_path(start, goal, visited_from)
 
             for n, weight in self._edges[current]:
                 if vertices.has(n) and distance + weight < vertices.priority(n):
                     vertices.decrease_priority(n, distance + weight)
+                    visited_from[n] = current
+        return None
+
+    def greedy(self, start: int, goal: int, heuristic):
+        visited_from = [None] * self.vertex_count
+        vertices = PriorityQueue(self.vertex_count)
+
+        visited_from[start] = start
+        vertices.add(start, 0)
+
+        while not vertices.empty():
+            current, _ = vertices.pop()
+
+            if current == goal:
+                return Graph._build_path(start, goal, visited_from)
+
+            for n, _ in self._edges[current]:
+                if visited_from[n] is None:
+                    visited_from[n] = current
+                    vertices.add(n, heuristic(goal, n))
+        return None
+
+    def a_star(self, start: int, goal: int, heuristic):
+        visited_from = [None] * self.vertex_count
+        vertices = PriorityQueue(self.vertex_count)
+        for i in range(self.vertex_count):
+            vertices.add(i, INF)
+
+        visited_from[start] = start
+        vertices.decrease_priority(start, 0)
+
+        while not vertices.empty() and vertices.top()[1] != INF:
+            current, distance = vertices.pop()
+
+            if current == goal:
+                return Graph._build_path(start, goal, visited_from)
+
+            for n, weight in self._edges[current]:
+                new_priority = distance + weight + heuristic(goal, n)
+                if vertices.has(n) and new_priority < vertices.priority(n):
+                    vertices.decrease_priority(n, new_priority)
                     visited_from[n] = current
         return None
 
@@ -205,3 +254,7 @@ class Graph:
         s += 'Edges:\n'
         s += '\n'.join(f'    {start} -> {end} (weight {weight})' for weight, start, end in self.edges)
         return s
+
+sample_graph = Graph([[], [[2, 100], [28, 40]], [[1, 100], [3, 100], [29, 40]], [[2, 100], [4, 100], [30, 40]], [[3, 100], [5, 100], [31, 40]], [[4, 100], [6, 100], [32, 40]], [[5, 100], [7, 100], [33, 40]], [[6, 100], [8, 100], [34, 40]], [[7, 100], [9, 100], [35, 40]], [[8, 100], [10, 100], [36, 40]], [[9, 100], [11, 100], [37, 40]], [[10, 100], [12, 100], [38, 40]], [[11, 100], [13, 100], [39, 40]], [[12, 100], [14, 100], [40, 40]], [[13, 100], [15, 100], [41, 40]], [[14, 100], [16, 100], [42, 40]], [[15, 100], [17, 100], [43, 40]], [[16, 100], [18, 100], [44, 40]], [[17, 100], [19, 100], [45, 40]], [[18, 100], [20, 100], [46, 40]], [[19, 100], [21, 100], [47, 40]], [[20, 100], [22, 100], [48, 40]], [[21, 100], [23, 100], [49, 40]], [[22, 100], [24, 100], [50, 40]], [[23, 100], [25, 100], [51, 40]], [[24, 100], [26, 100], [52, 40]], [[25, 100], [27, 100], [53, 40]], [[26, 100], [28, 100], [54, 40]], [[27, 100], [29, 100], [1, 40], [55, 40]], [[28, 100], [30, 100], [2, 40], [56, 40]], [[29, 100], [31, 100], [3, 40], [57, 40]], [[30, 100], [32, 100], [4, 40], [58, 40]], [[31, 100], [33, 100], [5, 40], [59, 40]], [[32, 100], [34, 100], [6, 40], [60, 40]], [[33, 100], [35, 100], [7, 40], [61, 40]], [[34, 100], [36, 100], [8, 40], [62, 40]], [[35, 100], [37, 100], [9, 40], [63, 40]], [[36, 100], [38, 100], [10, 40], [64, 40]], [[37, 100], [39, 100], [11, 40], [65, 40]], [[38, 100], [40, 100], [12, 40], [66, 40]], [[39, 100], [41, 100], [13, 40], [67, 40]], [[40, 100], [42, 100], [14, 40], [68, 40]], [[41, 100], [43, 100], [15, 40], [69, 40]], [[42, 100], [44, 100], [16, 40], [70, 40]], [[43, 100], [45, 100], [17, 40], [71, 40]], [[44, 100], [46, 100], [18, 40], [72, 40]], [[45, 100], [47, 100], [19, 40], [73, 40]], [[46, 100], [48, 100], [20, 40], [74, 40]], [[47, 100], [49, 100], [21, 40], [75, 40]], [[48, 100], [50, 100], [22, 40], [76, 40]], [[49, 100], [51, 100], [23, 40], [77, 40]], [[50, 100], [52, 100], [24, 40], [78, 40]], [[51, 100], [53, 100], [25, 40], [79, 40]], [[52, 100], [54, 100], [26, 40], [80, 40]], [[53, 100], [55, 100], [27, 40], [81, 40]], [[54, 100], [56, 100], [28, 40], [82, 40]], [[55, 100], [57, 100], [29, 40], [83, 40]], [[56, 100], [58, 100], [30, 40], [84, 40]], [[57, 100], [59, 100], [31, 40], [85, 40]], [[58, 100], [60, 100], [32, 40], [86, 40]], [[59, 100], [61, 100], [33, 40], [87, 40]], [[60, 100], [62, 100], [34, 40], [88, 40]], [[61, 100], [63, 100], [35, 40], [89, 40]], [[62, 100], [64, 100], [36, 40], [90, 40]], [[63, 100], [65, 100], [37, 40], [91, 40]], [[64, 100], [66, 100], [38, 40], [92, 40]], [[65, 100], [67, 100], [39, 40], [93, 40]], [[66, 100], [68, 100], [40, 40], [94, 40]], [[67, 100], [69, 100], [41, 40], [95, 40]], [[68, 100], [70, 100], [42, 40], [96, 40]], [[69, 100], [71, 100], [43, 40], [97, 40]], [[70, 100], [72, 100], [44, 40], [98, 40]], [[71, 100], [73, 100], [45, 40], [99, 40]], [[72, 100], [74, 100], [46, 40], [100, 40]], [[73, 100], [75, 100], [47, 40], [101, 40]], [[74, 100], [76, 100], [48, 40], [102, 40]], [[75, 100], [77, 100], [49, 40], [103, 40]], [[76, 100], [78, 100], [50, 40], [104, 40]], [[77, 100], [79, 100], [51, 40], [105, 40]], [[78, 100], [80, 100], [52, 40], [106, 40]], [[79, 100], [81, 100], [53, 40], [107, 40]], [[80, 100], [82, 100], [54, 40], [108, 40]], [[81, 100], [83, 100], [55, 40], [109, 40]], [[82, 100], [84, 100], [56, 40], [110, 40]], [[83, 100], [85, 100], [57, 40], [111, 40]], [[84, 100], [86, 100], [58, 40], [112, 40]], [[85, 100], [87, 100], [59, 40], [113, 40]], [[86, 100], [88, 100], [60, 40], [114, 40]], [[87, 100], [89, 100], [61, 40], [115, 40]], [[88, 100], [90, 100], [62, 40], [116, 40]], [[89, 100], [91, 100], [63, 40], [117, 40]], [[90, 100], [92, 100], [64, 40], [118, 40]], [[91, 100], [93, 100], [65, 40], [119, 40]], [[92, 100], [94, 100], [66, 40], [120, 40]], [[93, 100], [95, 100], [67, 40], [121, 40]], [[94, 100], [96, 100], [68, 40], [122, 40]], [[95, 100], [97, 100], [69, 40], [123, 40]], [[96, 100], [98, 100], [70, 40], [124, 40]], [[97, 100], [99, 100], [71, 40], [125, 40]], [[98, 100], [100, 100], [72, 40], [126, 40]], [[99, 100], [73, 40]], [[74, 40]], [[75, 40]], [[76, 40]], [[77, 40]], [[78, 40]], [[79, 40]], [[80, 40]], [[81, 40]], [[82, 40]], [[83, 40]], [[84, 40]], [[85, 40]], [[86, 40]], [[87, 40]], [[88, 40]], [[89, 40]], [[90, 40]], [[91, 40]], [[92, 40]], [[93, 40]], [[94, 40]], [[95, 40]], [[96, 40]], [[97, 40]], [[98, 40]], [[99, 40]], []])
+
+sample_heuristic = lambda a, b: abs(a - b)
