@@ -164,13 +164,13 @@ class Graph:
     def min_spanning_tree(self):
         ds = DisjointSet(self.vertex_count)
 
-        edges = [[] for _ in range(self.vertex_count)]
+        tree = Graph.of_size(self.vertex_count)
         for weight, start, end in sorted(self.edges):
             if not ds.is_connected(start, end):
                 ds.union(start, end)
-                edges[start].append((end, weight))
+                tree.add_bidirectional_edge(start, end, weight)
 
-        return Graph(edges)
+        return tree
 
     @staticmethod
     def _build_path(start: int, end: int, visited_from: list[int]):
