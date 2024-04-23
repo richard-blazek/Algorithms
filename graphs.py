@@ -25,21 +25,21 @@ class DisjointSet:
     def is_connected(self, v1, v2):
         return self.find(v1) == self.find(v2)
 
-class IndexHeap:
-    def __init__(self, size: int, default: float):
-        self._heap = [[i, default] for i in range(size)]
-        self._map = list(range(size))
+class PriorityQueue:
+    def __init__(self, capacity: int):
+        self._heap = []
+        self._map = [None] * capacity
 
-    def _swap(self, i, j):
+    def _swap(self, i: int, j: int):
         self._map[self._heap[i][0]], self._map[self._heap[j][0]] = self._map[self._heap[j][0]], self._map[self._heap[i][0]]
         self._heap[i], self._heap[j] = self._heap[j], self._heap[i]
 
-    def _bubble_up(self, i):
+    def _bubble_up(self, i: int):
         while (parent := (i - 1) // 2) >= 0 and self._heap[i][1] <= self._heap[parent][1]:
             self._swap(i, parent)
             i = parent
 
-    def _bubble_down(self, i):
+    def _bubble_down(self, i: int):
         while (child := i * 2 + 1) < len(self._heap):
             if child + 1 < len(self._heap) and self._heap[child + 1][1] < self._heap[child][1]:
                 child += 1
@@ -50,7 +50,7 @@ class IndexHeap:
             self._swap(i, child)
             i = child
 
-    def update(self, index, new_value):
+    def update(self, index: int, new_value):
         i = self._map[index]
         old_value = self._heap[i][1]
         self._heap[i][1] = new_value
@@ -59,7 +59,7 @@ class IndexHeap:
         elif new_value > old_value:
             self._bubble_down(i)
 
-    def value_of(self, index):
+    def value_of(self, index: int):
         return self._heap[self._map[index]][1]
 
     def pop(self):
@@ -69,10 +69,15 @@ class IndexHeap:
         self._bubble_down(0)
         return index, value
 
+    def add(self, index: int, value):
+        self._heap.append([index, value])
+        self._map[index] = len(self._heap) - 1
+        self._bubble_up(len(self._heap) - 1)
+
     def empty(self):
         return not self._heap
-    
-    def has(self, index):
+
+    def has(self, index: int):
         return self._map[index] is not None
 
 class Graph:
@@ -178,8 +183,9 @@ class Graph:
     def dijkstra(self, start, end):
         visited_from = [-1] * self.vertex_count
 
-        vertices = IndexHeap(self.vertex_count, INF)
-        vertices.update(start, 0)
+        vertices = PriorityQueue(self.vertex_count)
+        for i in range(self.vertex_count):
+            vertices.add(i, 0 if i == start else INF)
 
         while True:
             if vertices.empty():
