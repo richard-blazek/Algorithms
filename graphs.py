@@ -216,8 +216,9 @@ class Graph:
                 return Graph._build_path(start, goal, visited_from)
 
             for n, weight in self._edges[current]:
-                if vertices.has(n) and distance + weight < vertices.priority(n):
-                    vertices.set_priority(n, distance + weight)
+                new_priority = distance + weight
+                if vertices.has(n) and new_priority < vertices.priority(n):
+                    vertices.set_priority(n, new_priority)
                     visited_from[n] = current
         return None
 
@@ -229,7 +230,7 @@ class Graph:
             vertices.add(i, INF)
 
         visited_from[start] = start
-        vertices._decrease_priority(start, 0)
+        vertices.set_priority(start, 0)
 
         while not vertices.empty() and vertices.top()[1] != INF:
             current, distance = vertices.pop()
@@ -240,7 +241,7 @@ class Graph:
             for n, weight in self._edges[current]:
                 new_priority = distance + weight + heuristic(goal, n)
                 if vertices.has(n) and new_priority < vertices.priority(n):
-                    vertices._decrease_priority(n, new_priority)
+                    vertices.set_priority(n, new_priority)
                     visited_from[n] = current
         return None
 
