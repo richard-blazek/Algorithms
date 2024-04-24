@@ -313,7 +313,16 @@ class Graph:
 
     def floyd_warshall(self):
         second_last_step = [[None] * self.vertex_count for _ in range(self.vertex_count)]
-        distance_between = [[None] * self.vertex_count for _ in range(self.vertex_count)]
+        distance_between = [[INF] * self.vertex_count for _ in range(self.vertex_count)]
+
+        for i in range(self.vertex_count):
+            distance_between[i][i] = 0
+            second_last_step[i][i] = i
+
+        for weight, start, end in self.edges:
+            distance_between[start][end] = weight
+            second_last_step[start][end] = start
+
         for k in range(self.vertex_count):
             for i in range(self.vertex_count):
                 for j in range(self.vertex_count):
