@@ -53,9 +53,19 @@ class PriorityQueue:
     def priority(self, idx: int):
         return self._heap[self._map[idx]][1]
 
-    def decrease_priority(self, idx: int, priority: float):
+    def _decrease_priority(self, idx: int, priority: float):
         self._heap[self._map[idx]][1] = priority
         self._bubble_up(self._map[idx])
+
+    def _increase_priority(self, idx: int, priority: float):
+        self._heap[self._map[idx]][1] = priority
+        self._bubble_up(self._map[idx])
+
+    def set_priority(self, idx: int, priority: float):
+        if priority < self.priority(idx):
+            self._decrease_priority(idx, priority)
+        else:
+            self._increase_priority(idx, priority)
 
     def top(self):
         return self._heap[0]
@@ -197,7 +207,7 @@ class Graph:
             vertices.add(i, INF)
 
         visited_from[start] = start
-        vertices.decrease_priority(start, 0)
+        vertices.set_priority(start, 0)
 
         while not vertices.empty() and vertices.top()[1] != INF:
             current, distance = vertices.pop()
@@ -207,7 +217,7 @@ class Graph:
 
             for n, weight in self._edges[current]:
                 if vertices.has(n) and distance + weight < vertices.priority(n):
-                    vertices.decrease_priority(n, distance + weight)
+                    vertices.set_priority(n, distance + weight)
                     visited_from[n] = current
         return None
 
@@ -238,7 +248,7 @@ class Graph:
             vertices.add(i, INF)
 
         visited_from[start] = start
-        vertices.decrease_priority(start, 0)
+        vertices._decrease_priority(start, 0)
 
         while not vertices.empty() and vertices.top()[1] != INF:
             current, distance = vertices.pop()
@@ -249,7 +259,7 @@ class Graph:
             for n, weight in self._edges[current]:
                 new_priority = distance + weight + heuristic(goal, n)
                 if vertices.has(n) and new_priority < vertices.priority(n):
-                    vertices.decrease_priority(n, new_priority)
+                    vertices._decrease_priority(n, new_priority)
                     visited_from[n] = current
         return None
 
