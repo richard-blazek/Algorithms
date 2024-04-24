@@ -9,7 +9,6 @@
 #include "stack.h"
 #include "queue.h"
 #include "deque.h"
-#include "priority_queue.h"
 #include "hash_table.h"
 #include "xored_ll.h"
 
@@ -198,28 +197,6 @@ void test_deque()
     deque_free(dq);
 }
 
-void test_priority_queue()
-{
-    puts("Playing with the priority queue:");
-    priority_queue *priorityq = priority_queue_init();
-    priority_queue_push(priorityq, 1.0 / 4, 4);
-    priority_queue_push(priorityq, 1.0 / 8, 8);
-    priority_queue_push(priorityq, 1.0 / 1, 1);
-    priority_queue_push(priorityq, 1.0 / 5, 5);
-    priority_queue_push(priorityq, 1.0 / 2, 2);
-    priority_queue_push(priorityq, 1.0 / 4, 4);
-    priority_queue_push(priorityq, 1.0 / 10, 10);
-    priority_queue_push(priorityq, 1.0 / 4, 6);
-    priority_queue_push(priorityq, 1.0 / 4, 3);
-    while (!priority_queue_empty(priorityq))
-    {
-        printf("(%d ", priority_queue_top_priority(priorityq));
-        printf("%.3f) ", priority_queue_pop(priorityq));
-    }
-    putchar('\n');
-    priority_queue_free(priorityq);
-}
-
 void test_hash_table()
 {
     puts("Playing with the hash table:");
@@ -294,7 +271,6 @@ int main()
     test_stack();
     test_queue();
     test_deque();
-    test_priority_queue();
     test_hash_table();
     test_xor_linked_list();
     return 0;

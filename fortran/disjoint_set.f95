@@ -1,17 +1,10 @@
-subroutine assert(cond)
-    logical, intent(in) :: cond
+include "assert.f95"
 
-    if (.not. cond) then
-        print *, 'Assertion failed'
-        call abort()
-    end if
-end subroutine
-
-module disjointset
+module disjoint_set_library
     implicit none
     private
 
-    public disjoint_set, disjoint_set_init, disjoint_set_find, disjoint_set_union
+    public disjoint_set, disjoint_set_init, disjoint_set_find, disjoint_set_union, disjoint_set_is_connected
 
     type :: disjoint_set
         private
@@ -44,7 +37,6 @@ contains
         component = set%parent(vertex)
     end function disjoint_set_find
 
-
     subroutine disjoint_set_union(set, v1, v2)
         type(disjoint_set), intent(inout) :: set
         integer, intent(in) :: v1, v2
@@ -63,10 +55,18 @@ contains
             end if
         end if
     end subroutine disjoint_set_union
-end module disjointset
 
-program disjointset_test
-    use disjointset
+    recursive function disjoint_set_is_connected(set, v1, v2) result(connected)
+        type(disjoint_set), intent(inout) :: set
+        integer, intent(in) :: v1, v2
+        logical :: connected
+
+        connected = (disjoint_set_find(set, v1) == disjoint_set_find(set, v2))
+    end function disjoint_set_is_connected
+end module disjoint_set_library
+
+program disjoint_set_test
+    use disjoint_set_library
     implicit none
 
     type(disjoint_set) :: set
@@ -75,11 +75,12 @@ program disjointset_test
 
     do i = 0, 100
         do j = 0, 100
-            call assert((disjoint_set_find(set, i) == disjoint_set_find(set, j)) .eqv. (i == j));
+            call assert((disjoint_set_find(set, i) == disjoint_set_find(set, j)) .eqv. (i == j))
         end do
     end do
     do i = 0, 100
         call disjoint_set_union(set, i, mod(i + 10, 100))
+        call assert(disjoint_set_is_connected(set, i, mod(i + 10, 100)))
     end do
     do i = 0, 100
         do j = 0, 100
@@ -96,4 +97,4 @@ program disjointset_test
     end do
 
     print *, 'Tests passed!'
-end program disjointset_test
+end program disjoint_set_test
