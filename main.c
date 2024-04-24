@@ -12,7 +12,6 @@
 #include "priority_queue.h"
 #include "hash_table.h"
 #include "xored_ll.h"
-#include "disjoint_set.h"
 
 #define ARRAY_SIZE 55
 
@@ -277,42 +276,6 @@ void test_xor_linked_list()
     xored_ll_free(list);
 }
 
-void test_disjoint_set()
-{
-    disjoint_set *set = disjoint_set_init(100);
-    for (size_t i = 0; i < 100; ++i)
-    {
-        for (size_t j = 0; j < 100; ++j)
-        {
-            assert((disjoint_set_find(set, i) == disjoint_set_find(set, j)) == (i == j));
-        }
-    }
-    for (size_t i = 0; i < 100; ++i)
-    {
-        disjoint_set_union(set, i, (i + 10) % 100);
-    }
-    for (size_t i = 0; i < 100; ++i)
-    {
-        for (size_t j = 0; j < 100; ++j)
-        {
-            assert((disjoint_set_find(set, i) == disjoint_set_find(set, j)) == (i % 10 == j % 10));
-        }
-    }
-    for (size_t i = 1; i < 10; ++i)
-    {
-        disjoint_set_union(set, 0, i);
-    }
-    for (size_t i = 0; i < 100; ++i)
-    {
-        for (size_t j = 0; j < 100; ++j)
-        {
-            assert(disjoint_set_find(set, i) == disjoint_set_find(set, j));
-        }
-    }
-    disjoint_set_free(set);
-    printf("Disjoint set OK\n");
-}
-
 int main()
 {
     srand(time(0));
@@ -334,6 +297,5 @@ int main()
     test_priority_queue();
     test_hash_table();
     test_xor_linked_list();
-    test_disjoint_set();
     return 0;
 }

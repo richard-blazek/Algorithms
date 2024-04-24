@@ -1,2 +1,4 @@
 .vscode/
 algo
+fortran_algo
+*.mod
