@@ -65,7 +65,7 @@ contains
     end subroutine disjoint_set_union
 end module disjointset
 
-program main
+program disjointset_test
     use disjointset
     implicit none
 
@@ -96,4 +96,4 @@ program main
     end do
 
     print *, 'Tests passed!'
-end program main
+end program disjointset_test
