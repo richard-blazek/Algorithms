@@ -221,25 +221,6 @@ class Graph:
                     visited_from[n] = current
         return None
 
-    def greedy(self, start: int, goal: int, heuristic):
-        visited_from = [None] * self.vertex_count
-        vertices = PriorityQueue(self.vertex_count)
-
-        visited_from[start] = start
-        vertices.add(start, 0)
-
-        while not vertices.empty():
-            current, _ = vertices.pop()
-
-            if current == goal:
-                return Graph._build_path(start, goal, visited_from)
-
-            for n, _ in self._edges[current]:
-                if visited_from[n] is None:
-                    visited_from[n] = current
-                    vertices.add(n, heuristic(goal, n))
-        return None
-
     # With heuristic is f(x) = 0, A* becomes Dijkstra
     def a_star(self, start: int, goal: int, heuristic):
         visited_from = [None] * self.vertex_count
@@ -261,6 +242,25 @@ class Graph:
                 if vertices.has(n) and new_priority < vertices.priority(n):
                     vertices._decrease_priority(n, new_priority)
                     visited_from[n] = current
+        return None
+
+    def greedy(self, start: int, goal: int, heuristic):
+        visited_from = [None] * self.vertex_count
+        vertices = PriorityQueue(self.vertex_count)
+
+        visited_from[start] = start
+        vertices.add(start, 0)
+
+        while not vertices.empty():
+            current, _ = vertices.pop()
+
+            if current == goal:
+                return Graph._build_path(start, goal, visited_from)
+
+            for n, _ in self._edges[current]:
+                if visited_from[n] is None:
+                    visited_from[n] = current
+                    vertices.add(n, heuristic(goal, n))
         return None
 
     def _vertex_with_no_outgoing_edges(self):
