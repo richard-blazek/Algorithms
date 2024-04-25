@@ -23,40 +23,40 @@ class PriorityQueue:
             self._swap(i, child)
             i = child
 
-    def priority(self, idx: int):
-        return self._heap[self._map[idx]][1]
+    def priority(self, identity: int):
+        return self._heap[self._map[identity]][1]
 
-    def _decrease_priority(self, idx: int, priority: float):
-        self._heap[self._map[idx]][1] = priority
-        self._bubble_up(self._map[idx])
+    def _decrease_priority(self, identity: int, priority: float):
+        self._heap[self._map[identity]][1] = priority
+        self._bubble_up(self._map[identity])
 
-    def _increase_priority(self, idx: int, priority: float):
-        self._heap[self._map[idx]][1] = priority
-        self._bubble_up(self._map[idx])
+    def _increase_priority(self, identity: int, priority: float):
+        self._heap[self._map[identity]][1] = priority
+        self._bubble_up(self._map[identity])
 
-    def set_priority(self, idx: int, priority: float):
-        if priority < self.priority(idx):
-            self._decrease_priority(idx, priority)
+    def set_priority(self, identity: int, priority: float):
+        if priority < self.priority(identity):
+            self._decrease_priority(identity, priority)
         else:
-            self._increase_priority(idx, priority)
+            self._increase_priority(identity, priority)
 
     def top(self):
         return self._heap[0]
 
     def pop(self):
         self._swap(0, len(self._heap) - 1)
-        index, priority = self._heap.pop()
-        self._map[index] = None
+        identity, priority = self._heap.pop()
+        self._map[identity] = None
         self._bubble_down(0)
-        return index, priority
+        return identity, priority
 
-    def add(self, idx: int, priority: float):
-        self._heap.append([idx, priority])
-        self._map[idx] = len(self._heap) - 1
+    def add(self, identity: int, priority: float):
+        self._heap.append([identity, priority])
+        self._map[identity] = len(self._heap) - 1
         self._bubble_up(len(self._heap) - 1)
 
     def empty(self):
         return not self._heap
 
-    def has(self, index: int):
-        return self._map[index] is not None
+    def has(self, identity: int):
+        return self._map[identity] is not None
