@@ -341,7 +341,7 @@ contains
         real, intent(out) :: array(:)
 
         call random_number(array)
-        array = floor(array * 1000)
+        array = floor(array * 1000) / 10
     end subroutine
 end module
 
@@ -350,64 +350,46 @@ program sorting_test
     use testing_tools
     implicit none
 
-    real :: real_array (97)
-    character(32) :: str_array (97)
+    real :: real_array (137)
+    character(32) :: str_array (137)
     integer :: i
 
     call random_seed()
 
-    do i = 1, 1
+    do i = 1, 400
         call random_real(real_array)
-        call bubble_sort(real_array)
-        call assert(is_sorted_real(real_array))
         call bubble_sort(real_array)
         call assert(is_sorted_real(real_array))
 
         call random_real(real_array)
         call selection_sort(real_array)
         call assert(is_sorted_real(real_array))
-        call selection_sort(real_array)
-        call assert(is_sorted_real(real_array))
 
         call random_real(real_array)
         call insertion_sort(real_array)
         call assert(is_sorted_real(real_array))
-        call insertion_sort(real_array)
-        call assert(is_sorted_real(real_array))
-        
+
         call random_real(real_array)
         call quick_sort(real_array)
         call assert(is_sorted_real(real_array))
-        call quick_sort(real_array)
-        call assert(is_sorted_real(real_array))
-        
+
         call random_real(real_array)
         call merge_sort(real_array)
         call assert(is_sorted_real(real_array))
-        call merge_sort(real_array)
-        call assert(is_sorted_real(real_array))
-        
+
         call random_real(real_array)
-        call heap_sort(real_array)
-        call assert(is_sorted_real(real_array))
         call heap_sort(real_array)
         call assert(is_sorted_real(real_array))
 
         call random_str(str_array)
         call lsd_radix_sort(str_array)
         call assert(is_sorted_str(str_array))
-        call lsd_radix_sort(str_array)
-        call assert(is_sorted_str(str_array))
 
         call random_str(str_array)
         call msd_radix_sort(str_array)
         call assert(is_sorted_str(str_array))
-        call msd_radix_sort(str_array)
-        call assert(is_sorted_str(str_array))
 
         call random_str(str_array)
-        call three_way_quick_sort(str_array)
-        call assert(is_sorted_str(str_array))
         call three_way_quick_sort(str_array)
         call assert(is_sorted_str(str_array))
     end do
