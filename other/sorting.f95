@@ -290,7 +290,19 @@ end module
 module testing_tools
     implicit none
     private
-    public is_sorted_real, is_sorted_str, random_real, random_str
+    public test_sort_real, test_sort_str
+
+    abstract interface
+        subroutine sort_real(array)
+            real, intent(inout) :: array(:)
+        end subroutine
+    end interface
+
+    abstract interface
+        subroutine sort_str(array)
+            character(32), intent(inout) :: array(:)
+        end subroutine
+    end interface
 
 contains
     function is_sorted_real(array) result(sorted)
@@ -337,11 +349,26 @@ contains
         end do
     end subroutine
 
-    subroutine random_real(array)
-        real, intent(out) :: array(:)
+    subroutine test_sort_real(sort)
+        procedure(sort_real) :: sort
+        real :: arr (137)
 
-        call random_number(array)
-        array = floor(array * 1000) / 10
+        call random_number(arr)
+        call sort(arr)
+        call assert(is_sorted_real(arr))
+        call sort(arr)
+        call assert(is_sorted_real(arr))
+    end subroutine
+
+    subroutine test_sort_str(sort)
+        procedure(sort_str) :: sort
+        character(32) :: arr (137)
+
+        call random_str(arr)
+        call sort(arr)
+        call assert(is_sorted_str(arr))
+        call sort(arr)
+        call assert(is_sorted_str(arr))
     end subroutine
 end module
 
@@ -350,48 +377,21 @@ program sorting_test
     use testing_tools
     implicit none
 
-    real :: real_array (137)
-    character(32) :: str_array (137)
     integer :: i
 
     call random_seed()
 
     do i = 1, 400
-        call random_real(real_array)
-        call bubble_sort(real_array)
-        call assert(is_sorted_real(real_array))
+        call test_sort_real(bubble_sort)
+        call test_sort_real(selection_sort)
+        call test_sort_real(insertion_sort)
+        call test_sort_real(quick_sort)
+        call test_sort_real(merge_sort)
+        call test_sort_real(heap_sort)
 
-        call random_real(real_array)
-        call selection_sort(real_array)
-        call assert(is_sorted_real(real_array))
-
-        call random_real(real_array)
-        call insertion_sort(real_array)
-        call assert(is_sorted_real(real_array))
-
-        call random_real(real_array)
-        call quick_sort(real_array)
-        call assert(is_sorted_real(real_array))
-
-        call random_real(real_array)
-        call merge_sort(real_array)
-        call assert(is_sorted_real(real_array))
-
-        call random_real(real_array)
-        call heap_sort(real_array)
-        call assert(is_sorted_real(real_array))
-
-        call random_str(str_array)
-        call lsd_radix_sort(str_array)
-        call assert(is_sorted_str(str_array))
-
-        call random_str(str_array)
-        call msd_radix_sort(str_array)
-        call assert(is_sorted_str(str_array))
-
-        call random_str(str_array)
-        call three_way_quick_sort(str_array)
-        call assert(is_sorted_str(str_array))
+        call test_sort_str(lsd_radix_sort)
+        call test_sort_str(msd_radix_sort)
+        call test_sort_str(three_way_quick_sort)
     end do
 
     print *, 'Tests passed!'
