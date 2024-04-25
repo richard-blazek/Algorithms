@@ -5,7 +5,7 @@ module sorting_library
     private
     public bubble_sort, selection_sort, insertion_sort
     public quick_sort, merge_sort, heap_sort
-    public lsd_radix_sort
+    public lsd_radix_sort, msd_radix_sort
 
 contains
     subroutine swap(x, y)
@@ -189,34 +189,61 @@ contains
         end do
     end subroutine heap_sort
 
-    subroutine lsd_radix_sort(array)
+    subroutine radix_sort_one_pass(array, letter_index, starts)
         character(32), intent(inout) :: array(:)
+        integer, intent(in) :: letter_index
+        integer, intent(out) :: starts(0:256)
 
         character(32) :: tmp(size(array))
-        integer :: counts(0:255), starts(0:256)
-        integer :: i, letter_index, letter
+        integer :: counts(0:255), i, letter
+
+        counts = 0
+        do i = 1, size(array)
+            letter = ichar(array(i)(letter_index:letter_index))
+            counts(letter) = counts(letter) + 1
+        end do
+
+        starts(0) = 1
+        do i = 1, 256
+            starts(i) = starts(i - 1) + counts(i - 1)
+        end do
+
+        do i = 1, size(array)
+            letter = ichar(array(i)(letter_index:letter_index))
+            tmp(starts(letter)) = array(i)
+            starts(letter) = starts(letter) + 1
+        end do
+
+        array = tmp
+    end subroutine radix_sort_one_pass
+
+    subroutine lsd_radix_sort(array)
+        character(32), intent(inout) :: array(:)
+        integer :: starts(0:256), letter_index
 
         do letter_index = 32, 1, -1
-            counts = 0
-            do i = 1, size(array)
-                letter = ichar(array(i)(letter_index:letter_index))
-                counts(letter) = counts(letter) + 1
-            end do
-
-            starts(0) = 1
-            do i = 1, 256
-                starts(i) = starts(i - 1) + counts(i - 1)
-            end do
-
-            do i = 1, size(array)
-                letter = ichar(array(i)(letter_index:letter_index))
-                tmp(starts(letter)) = array(i)
-                starts(letter) = starts(letter) + 1
-            end do
-
-            array = tmp
+            call radix_sort_one_pass(array, letter_index, starts)
         end do
     end subroutine lsd_radix_sort
+
+    recursive subroutine msd_radix_sort_nth(array, letter_index)
+        character(32), intent(inout) :: array(:)
+        integer, intent(in) :: letter_index
+        integer :: starts(0:256), i
+
+        if (letter_index <= 32 .and. size(array) > 1) then
+            call radix_sort_one_pass(array, letter_index, starts)
+
+            do i = 0, 255
+                call msd_radix_sort_nth(array(starts(i):starts(i + 1) - 1), letter_index + 1)
+            end do
+        end if
+    end subroutine msd_radix_sort_nth
+
+    subroutine msd_radix_sort(array)
+        character(32), intent(inout) :: array(:)
+        call msd_radix_sort_nth(array, 1)
+    end subroutine msd_radix_sort
 end module sorting_library
 
 module testing_tools
@@ -320,6 +347,12 @@ program sorting_test
     call lsd_radix_sort(str_array)
     call assert(is_sorted_str(str_array))
     call lsd_radix_sort(str_array)
+    call assert(is_sorted_str(str_array))
+
+    call random_str(str_array)
+    call msd_radix_sort(str_array)
+    call assert(is_sorted_str(str_array))
+    call msd_radix_sort(str_array)
     call assert(is_sorted_str(str_array))
 
     print *, 'Tests passed!'
