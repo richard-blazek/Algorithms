@@ -14,7 +14,7 @@ contains
         tmp = x
         x = y
         y = tmp
-    end subroutine swap
+    end subroutine
 
     subroutine bubble_sort(array)
         real, intent(inout) :: array(:)
@@ -34,7 +34,7 @@ contains
             end do
             length = length - 1
         end do
-    end subroutine bubble_sort
+    end subroutine
 
     subroutine selection_sort(array)
         real, intent(inout) :: array(:)
@@ -50,7 +50,7 @@ contains
 
             call swap(array(i), array(min))
         end do
-    end subroutine selection_sort
+    end subroutine
 
     subroutine insertion_sort(array)
         real, intent(inout) :: array(:)
@@ -63,7 +63,7 @@ contains
                 dst = dst - 1
             end do
         end do
-    end subroutine insertion_sort
+    end subroutine
 
     subroutine partition(array, pivot)
         real, intent(inout) :: array(:)
@@ -82,7 +82,7 @@ contains
                 pivot = pivot + 1
             end if
         end do
-    end subroutine partition
+    end subroutine
 
     recursive subroutine quick_sort(array)
         real, intent(inout) :: array(:)
@@ -96,7 +96,7 @@ contains
         if (pivot + 1 < size(array)) then
             call quick_sort(array(pivot + 1:size(array)))
         end if        
-    end subroutine quick_sort
+    end subroutine
 
     subroutine merge(dst, src1, src2)
         real, intent(out) :: dst(:)
@@ -112,7 +112,7 @@ contains
                 i = i + 1
             end if
         end do
-    end subroutine merge
+    end subroutine
 
     subroutine merge_all(src, dst, d)
         real, intent(in) :: src(:)
@@ -123,7 +123,7 @@ contains
         do i = 1, size(src), 2 * d
             call merge(dst(i:), src(i : min(i + d - 1, size(src))), src(i + d : min(i + 2 * d - 1, size(src))))
         end do
-    end subroutine merge_all
+    end subroutine
 
     subroutine merge_sort(array)
         real, intent(inout) :: array(:)
@@ -137,7 +137,7 @@ contains
             call merge_all(tmp, array, step * 2)
             step = step * 4
         end do
-    end subroutine merge_sort
+    end subroutine
 
     subroutine heap_insert(heap, val)
         real, intent(inout) :: heap(:)
@@ -150,7 +150,7 @@ contains
             call swap(heap(i), heap(i / 2))
             i = i / 2
         end do
-    end subroutine heap_insert
+    end subroutine
 
     subroutine heap_remove(heap, val)
         real, intent(inout) :: heap(:)
@@ -175,7 +175,7 @@ contains
             call swap(heap(next), heap(i))
             i = next
         end do
-    end subroutine heap_remove
+    end subroutine
 
     subroutine heap_sort(array)
         real, intent(inout) :: array(:)
@@ -187,7 +187,7 @@ contains
         do i = size(array), 1, -1
             call heap_remove(array(1:i), array(i))
         end do
-    end subroutine heap_sort
+    end subroutine
 
     subroutine radix_sort_one_pass(array, letter_index, starts)
         character(32), intent(inout) :: array(:)
@@ -215,7 +215,7 @@ contains
         end do
 
         array = tmp
-    end subroutine radix_sort_one_pass
+    end subroutine
 
     subroutine lsd_radix_sort(array)
         character(32), intent(inout) :: array(:)
@@ -224,7 +224,7 @@ contains
         do letter_index = 32, 1, -1
             call radix_sort_one_pass(array, letter_index, starts)
         end do
-    end subroutine lsd_radix_sort
+    end subroutine
 
     recursive subroutine msd_radix_sort_nth(array, letter_index)
         character(32), intent(inout) :: array(:)
@@ -240,13 +240,13 @@ contains
                 end if
             end do
         end if
-    end subroutine msd_radix_sort_nth
+    end subroutine
 
     subroutine msd_radix_sort(array)
         character(32), intent(inout) :: array(:)
         call msd_radix_sort_nth(array, 1)
-    end subroutine msd_radix_sort
-end module sorting_library
+    end subroutine
+end module
 
 module testing_tools
     implicit none
@@ -264,7 +264,7 @@ contains
         do i = 1, size(array) - 1
             sorted = sorted .and. (array(i) <= array(i + 1))
         end do
-    end function is_sorted_real
+    end function
     function is_sorted_str(array) result(sorted)
         character(32), intent(in) :: array(:)
         logical :: sorted
@@ -274,7 +274,7 @@ contains
         do i = 1, size(array) - 1
             sorted = sorted .and. (array(i) <= array(i + 1))
         end do
-    end function is_sorted_str
+    end function
 
     function rand_int(range) result (val)
         integer, intent(in) :: range
@@ -283,7 +283,7 @@ contains
 
         call random_number(random)
         val = floor(random * range) + 1
-    end function rand_int
+    end function
 
     subroutine random_str(array)
         character(32), intent(out) :: array(:)
@@ -296,8 +296,8 @@ contains
                 array(i)(j:j) = alphabet(letter:letter)
             end do
         end do
-    end subroutine random_str
-end module testing_tools
+    end subroutine
+end module
 
 program sorting_test
     use sorting_library
@@ -358,4 +358,4 @@ program sorting_test
     call assert(is_sorted_str(str_array))
 
     print *, 'Tests passed!'
-end program sorting_test
+end program

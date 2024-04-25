@@ -22,7 +22,7 @@ contains
         allocate(pq%identity(8))
         allocate(pq%priority(8))
         pq%count = 0
-    end function priority_queue_init
+    end function
 
     subroutine swap(pq, i, j)
         type(priority_queue), intent(inout) :: pq
@@ -37,7 +37,7 @@ contains
         tmp_r = pq%priority(i)
         pq%priority(i) = pq%priority(j)
         pq%priority(j) = tmp_r
-    end subroutine swap
+    end subroutine
 
     subroutine bubble_up(pq, index)
         type(priority_queue), intent(inout) :: pq
@@ -49,7 +49,7 @@ contains
             call swap(pq, i, i / 2)
             i = i / 2
         end do
-    end subroutine bubble_up
+    end subroutine
 
     subroutine bubble_down(pq, index)
         type(priority_queue), intent(inout) :: pq
@@ -72,7 +72,7 @@ contains
             call swap(pq, i, next)
             i = next
         end do
-    end subroutine bubble_down
+    end subroutine
 
     subroutine resize(pq, new_size)
         type(priority_queue), intent(inout) :: pq
@@ -92,7 +92,7 @@ contains
         tmp_prior(1:copied) = pq%priority
         deallocate(pq%priority)
         call move_alloc(tmp_prior, pq%priority)
-    end subroutine resize
+    end subroutine
 
     subroutine priority_queue_insert(pq, identity, priority)
         type(priority_queue), intent(inout) :: pq
@@ -107,13 +107,13 @@ contains
         pq%identity(pq%count) = identity
         pq%priority(pq%count) = priority
         call bubble_up(pq, pq%count)
-    end subroutine priority_queue_insert
+    end subroutine
 
     function priority_queue_is_empty(pq) result(empty)
         type(priority_queue), intent(inout) :: pq
         logical :: empty
         empty = (pq%count == 0)
-    end function priority_queue_is_empty
+    end function
 
     subroutine priority_queue_delete_top(pq)
         type(priority_queue), intent(inout) :: pq
@@ -126,20 +126,20 @@ contains
         if (pq%count < size(pq%identity) / 4 .and. size(pq%identity) > 8) then
             call resize(pq, size(pq%identity) / 2)
         end if
-    end subroutine priority_queue_delete_top
+    end subroutine
 
     function priority_queue_top_identity(pq) result(identity)
         type(priority_queue), intent(inout) :: pq
         integer :: identity
         identity = pq%identity(1)
-    end function priority_queue_top_identity
+    end function
 
     function priority_queue_top_priority(pq) result(priority)
         type(priority_queue), intent(inout) :: pq
         real :: priority
         priority = pq%priority(1)
-    end function priority_queue_top_priority
-end module priority_queue_library
+    end function
+end module
 
 program priority_queue_test
     use priority_queue_library
@@ -201,4 +201,4 @@ program priority_queue_test
     call assert(priority_queue_is_empty(priorityq))
 
     print *, "Tests passed!"
-end program priority_queue_test
+end program

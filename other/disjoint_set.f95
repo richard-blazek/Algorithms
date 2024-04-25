@@ -24,7 +24,7 @@ contains
         do i = 1, size
             set%parent(i) = i
         end do
-    end function disjoint_set_init
+    end function
 
     recursive function disjoint_set_find(set, vertex) result(component)
         type(disjoint_set), intent(inout) :: set
@@ -35,7 +35,7 @@ contains
             set%parent(vertex) = disjoint_set_find(set, set%parent(vertex))
         end if
         component = set%parent(vertex)
-    end function disjoint_set_find
+    end function
 
     subroutine disjoint_set_union(set, v1, v2)
         type(disjoint_set), intent(inout) :: set
@@ -54,7 +54,7 @@ contains
                 set%rank(c1) = set%rank(c1) + set%rank(c2)
             end if
         end if
-    end subroutine disjoint_set_union
+    end subroutine
 
     recursive function disjoint_set_is_connected(set, v1, v2) result(connected)
         type(disjoint_set), intent(inout) :: set
@@ -62,8 +62,8 @@ contains
         logical :: connected
 
         connected = (disjoint_set_find(set, v1) == disjoint_set_find(set, v2))
-    end function disjoint_set_is_connected
-end module disjoint_set_library
+    end function
+end module
 
 program disjoint_set_test
     use disjoint_set_library
@@ -97,4 +97,4 @@ program disjoint_set_test
     end do
 
     print *, 'Tests passed!'
-end program disjoint_set_test
+end program

@@ -31,7 +31,7 @@ contains
             hash = xor(ishft(hash, 5) + hash, ichar(key(i:i)))
         end do
         hash = abs(hash)
-    end function hash_string
+    end function
 
     function lookup(tab, key) result (i)
         type(hash_table), intent(in) :: tab
@@ -43,7 +43,7 @@ contains
         do while (tab%data(i)%exists .and. tab%data(i)%key /= key)
             i = mod(i, size(tab%data)) + 1
         end do
-    end function lookup
+    end function
 
     subroutine store(tab, key, val)
         type(hash_table), intent(inout) :: tab
@@ -60,7 +60,7 @@ contains
         end if
 
         tab%data(i)%value = val
-    end subroutine store
+    end subroutine
 
     subroutine resize(tab, new_size)
         type(hash_table), intent(inout) :: tab
@@ -81,14 +81,14 @@ contains
         tab%count = tmp%count
         deallocate(tab%data)
         call move_alloc(tmp%data, tab%data)
-    end subroutine resize
+    end subroutine
 
     function hash_table_init() result (tab)
         type(hash_table) :: tab
 
         allocate(tab%data(16))
         tab%count = 0
-    end function hash_table_init
+    end function
 
     subroutine hash_table_put(tab, key, val)
         type(hash_table), intent(inout) :: tab
@@ -100,7 +100,7 @@ contains
         end if
 
         call store(tab, key, val)
-    end subroutine hash_table_put
+    end subroutine
 
     function hash_table_has(tab, key) result (has)
         type(hash_table), intent(inout) :: tab
@@ -108,7 +108,7 @@ contains
         logical :: has
 
         has = tab%data(lookup(tab, key))%exists
-    end function hash_table_has
+    end function
 
     function hash_table_get(tab, key) result (res)
         type(hash_table), intent(inout) :: tab
@@ -116,7 +116,7 @@ contains
         real :: res
 
         res = tab%data(lookup(tab, key))%value
-    end function hash_table_get
+    end function
 
     function find_first_gap(tab, begin) result (index)
         type(hash_table), intent(inout) :: tab
@@ -127,7 +127,7 @@ contains
         do while (tab%data(mod(index, size(tab%data)) + 1)%exists)
             index = index + 1
         end do
-    end function find_first_gap
+    end function
 
     subroutine remove_block(tab, begin, preserved)
         type(hash_table), intent(inout) :: tab
@@ -160,7 +160,7 @@ contains
         tab%data(begin:begin+before_wrap)%exists = .false.
         preserved(before_wrap+1:) = tab%data(1:after_wrap)
         tab%data(1:after_wrap)%exists = .false.
-    end subroutine remove_block
+    end subroutine
 
     subroutine hash_table_delete(tab, key)
         type(hash_table), intent(inout) :: tab
@@ -180,9 +180,9 @@ contains
                 call store(tab, preserved(i)%key, preserved(i)%value)
             end do
         end if
-    end subroutine hash_table_delete
+    end subroutine
 
-end module hash_table_library
+end module
 
 program hash_table_test
     use hash_table_library
@@ -223,4 +223,4 @@ program hash_table_test
         end if
     end do
     print *, 'Tests passed!'
-end program hash_table_test
+end program

@@ -18,19 +18,19 @@ contains
     function deque_init() result (dq)
         type(deque) :: dq
         allocate(dq%data(4))
-    end function deque_init
+    end function
 
     function deque_length(dq) result (length)
         type(deque), intent(in) :: dq
         integer :: length
         length = dq%length
-    end function deque_length
+    end function
 
     function deque_capacity(dq) result (capacity)
         type(deque), intent(in) :: dq
         integer :: capacity
         capacity = size(dq%data)
-    end function deque_capacity
+    end function
 
     function real_index(dq, i) result (idx)
         type(deque), intent(in) :: dq
@@ -47,14 +47,14 @@ contains
         integer, intent(in) :: i
         real :: item
         item = dq%data(real_index(dq, i))
-    end function deque_get
+    end function
 
     subroutine deque_set(dq, i, item)
         type(deque), intent(inout) :: dq
         integer, intent(in) :: i
         real, intent(in) :: item
         dq%data(real_index(dq, i)) = item
-    end subroutine deque_set
+    end subroutine
 
     subroutine realloc(dq, new_size)
         type(deque), intent(inout) :: dq
@@ -72,7 +72,7 @@ contains
 
         deallocate(tmp_data)
         dq%shift = 0
-    end subroutine realloc
+    end subroutine
 
     subroutine deque_reserve(dq, capacity)
         type(deque), intent(inout) :: dq
@@ -84,7 +84,7 @@ contains
             new_size = max(new_size, 2 * size(dq%data))
             call realloc(dq, new_size)
         end if
-    end subroutine deque_reserve
+    end subroutine
 
     subroutine deque_resize(dq, length)
         type(deque), intent(inout) :: dq
@@ -95,7 +95,7 @@ contains
         end if
 
         dq%length = length
-    end subroutine deque_resize
+    end subroutine
 
     subroutine deque_shrink(dq)
         type(deque), intent(inout) :: dq
@@ -103,7 +103,7 @@ contains
         if (dq%length /= size(dq%data) .and. size(dq%data) > 4) then
             call realloc(dq, max(dq%length, 4))
         end if
-    end subroutine deque_shrink
+    end subroutine
 
     subroutine deque_push_back(dq, value)
         type(deque), intent(inout) :: dq
@@ -111,7 +111,7 @@ contains
 
         call deque_resize(dq, dq%length + 1)
         call deque_set(dq, dq%length, value)
-    end subroutine deque_push_back
+    end subroutine
 
     subroutine deque_push_front(dq, value)
         type(deque), intent(inout) :: dq
@@ -120,7 +120,7 @@ contains
         call deque_resize(dq, dq%length + 1)
         call deque_set(dq, size(dq%data), value)
         dq%shift = mod(dq%shift - 1 + size(dq%data), size(dq%data))
-    end subroutine deque_push_front
+    end subroutine
 
     function deque_pop_back(dq) result (val)
         type(deque), intent(inout) :: dq
@@ -128,7 +128,7 @@ contains
 
         val = deque_get(dq, dq%length)
         dq%length = dq%length - 1
-    end function deque_pop_back
+    end function
 
     function deque_pop_front(dq) result (val)
         type(deque), intent(inout) :: dq
@@ -137,8 +137,8 @@ contains
         val = deque_get(dq, 1)
         dq%shift = mod(dq%shift + 1, size(dq%data))
         dq%length = dq%length - 1
-    end function deque_pop_front
-end module deque_library
+    end function
+end module
 
 program deque_test
     use deque_library
@@ -187,4 +187,4 @@ program deque_test
     call assert(deque_length(dq) == 1 .and. deque_capacity(dq) == 7 .and. deque_get(dq, 1) == 2.0)
 
     print *, 'Tests passed!'
-end program deque_test
+end program
