@@ -3,59 +3,12 @@
 #include <time.h>
 #include <assert.h>
 
-#include "sort.h"
 #include "singly_ll.h"
 #include "doubly_ll.h"
 #include "stack.h"
 #include "queue.h"
 #include "deque.h"
 #include "xored_ll.h"
-
-#define ARRAY_SIZE 55
-
-void fill_random_float(float (*output)[ARRAY_SIZE])
-{
-    for (size_t i = 0; i < ARRAY_SIZE; ++i)
-    {
-        (*output)[i] = (rand() / (float)RAND_MAX - 0.5) * 100.0;
-    }
-}
-
-void test_sort_float(void (*sort)(float *, size_t), const char *prompt)
-{
-    float array[ARRAY_SIZE];
-    fill_random_float(&array);
-    sort(array, ARRAY_SIZE);
-
-    puts(prompt);
-    for (size_t i = 0; i < ARRAY_SIZE; ++i)
-    {
-        printf("%f\n", array[i]);
-    }
-    putchar('\n');
-}
-
-void fill_random_uint8_t(uint8_t (*output)[ARRAY_SIZE])
-{
-    for (size_t i = 0; i < ARRAY_SIZE; ++i)
-    {
-        (*output)[i] = rand();
-    }
-}
-
-void test_sort_uint8_t(void (*sort)(uint8_t *, size_t), const char *prompt)
-{
-    uint8_t array[ARRAY_SIZE];
-    fill_random_uint8_t(&array);
-    sort(array, ARRAY_SIZE);
-
-    puts(prompt);
-    for (size_t i = 0; i < ARRAY_SIZE; ++i)
-    {
-        printf("%u\n", array[i]);
-    }
-    putchar('\n');
-}
 
 void print_singly_ll(singly_ll *node)
 {
@@ -225,15 +178,6 @@ void test_xor_linked_list()
 int main()
 {
     srand(time(0));
-
-    test_sort_float(bubble_sort, "Bubble sort:");
-    test_sort_float(insertion_sort, "Insertion sort:");
-    test_sort_float(selection_sort, "Selection sort:");
-    test_sort_float(quick_sort, "Quick sort:");
-    test_sort_float(merge_sort, "Merge sort:");
-    test_sort_float(heap_sort, "Heap sort:");
-    test_sort_float(radix_sort, "Radix sort:");
-    test_sort_uint8_t(counting_sort, "Counting sort:");
 
     test_singly_ll();
     test_doubly_ll();
