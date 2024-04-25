@@ -1,38 +1,38 @@
-#include "doubly_ll.h"
+#include "two_way.h"
 #include <stdlib.h>
 
-struct doubly_ll
+struct two_way
 {
     float value;
-    doubly_ll *prev, *next;
+    two_way *prev, *next;
 };
 
-doubly_ll *doubly_ll_init()
+two_way *two_way_init()
 {
-    doubly_ll *sentinel = malloc(sizeof(doubly_ll));
+    two_way *sentinel = malloc(sizeof(two_way));
     sentinel->next = sentinel;
     sentinel->prev = sentinel;
     return sentinel;
 }
 
-float doubly_ll_value(doubly_ll *node)
+float two_way_value(two_way *node)
 {
     return node->value;
 }
 
-doubly_ll *doubly_ll_next(doubly_ll *node)
+two_way *two_way_next(two_way *node)
 {
     return node->next;
 }
 
-doubly_ll *doubly_ll_previous(doubly_ll *node)
+two_way *two_way_previous(two_way *node)
 {
     return node->prev;
 }
 
-doubly_ll *doubly_ll_insert_after(doubly_ll *node, float new_value)
+two_way *two_way_insert_after(two_way *node, float new_value)
 {
-    doubly_ll *new_node = malloc(sizeof(doubly_ll));
+    two_way *new_node = malloc(sizeof(two_way));
     new_node->next = node->next;
     node->next->prev = new_node;
     new_node->prev = node;
@@ -41,7 +41,7 @@ doubly_ll *doubly_ll_insert_after(doubly_ll *node, float new_value)
     return new_node;
 }
 
-float doubly_ll_erase(doubly_ll *node)
+float two_way_erase(two_way *node)
 {
     if (node->next != node)
     {
@@ -54,9 +54,9 @@ float doubly_ll_erase(doubly_ll *node)
     return 0.0f;
 }
 
-void doubly_ll_free(doubly_ll *sentinel)
+void two_way_free(two_way *sentinel)
 {
-    doubly_ll *node = sentinel, *next;
+    two_way *node = sentinel, *next;
     do
     {
         next = node->next;

@@ -1,36 +1,36 @@
-#include "xored_ll.h"
+#include "xor_way.h"
 
 #include <stdint.h>
 #include <stdlib.h>
 
-#define XOR(a,b) ((xored_ll*)((uintptr_t)(a) ^ (uintptr_t)(b)))
+#define XOR(a,b) ((xor_way*)((uintptr_t)(a) ^ (uintptr_t)(b)))
 #define REPLACE(value,old,replacement) XOR(XOR(value, old), replacement)
 
-struct xored_ll
+struct xor_way
 {
     float value;
-    xored_ll *link;
+    xor_way *link;
 };
 
-xored_ll *xored_ll_init()
+xor_way *xor_way_init()
 {
-    return calloc(1, sizeof(xored_ll));
+    return calloc(1, sizeof(xor_way));
 }
 
-float xored_ll_value(xored_ll *node)
+float xor_way_value(xor_way *node)
 {
     return node->value;
 }
 
-xored_ll *xored_ll_next(xored_ll *other_side, xored_ll *current)
+xor_way *xor_way_next(xor_way *other_side, xor_way *current)
 {
     return XOR(other_side, current->link);
 }
 
-xored_ll *xored_ll_insert_after(xored_ll *prev, xored_ll *node, float new_value)
+xor_way *xor_way_insert_after(xor_way *prev, xor_way *node, float new_value)
 {
-    xored_ll *next = XOR(prev, node->link);
-    xored_ll *new = malloc(sizeof(xored_ll));
+    xor_way *next = XOR(prev, node->link);
+    xor_way *new = malloc(sizeof(xor_way));
     new->value = new_value;
     new->link = XOR(node, next);
     node->link = XOR(prev, new);
@@ -41,9 +41,9 @@ xored_ll *xored_ll_insert_after(xored_ll *prev, xored_ll *node, float new_value)
     return new;
 }
 
-float xored_ll_erase(xored_ll *prev, xored_ll *node)
+float xor_way_erase(xor_way *prev, xor_way *node)
 {
-    xored_ll *next = XOR(node->link, prev);
+    xor_way *next = XOR(node->link, prev);
     prev->link = REPLACE(prev->link, node, next);
     next->link = REPLACE(next->link, node, prev);
     float value = node->value;
@@ -51,12 +51,12 @@ float xored_ll_erase(xored_ll *prev, xored_ll *node)
     return value;
 }
 
-void xored_ll_free(xored_ll *head)
+void xor_way_free(xor_way *head)
 {
-    xored_ll *prev = head, *current = head->link;
+    xor_way *prev = head, *current = head->link;
     while (current)
     {
-        xored_ll *next = XOR(prev, current->link);
+        xor_way *next = XOR(prev, current->link);
         free(prev);
         prev = current;
         current = next;

@@ -1,41 +1,41 @@
-#include "singly_ll.h"
+#include "one_way.h"
 #include <stdlib.h>
 
-struct singly_ll
+struct one_way
 {
     float value;
-    singly_ll *next;
+    one_way *next;
 };
 
-singly_ll *singly_ll_init()
+one_way *one_way_init()
 {
-    return calloc(1, sizeof(singly_ll));
+    return calloc(1, sizeof(one_way));
 }
 
-float singly_ll_value(singly_ll *node)
+float one_way_value(one_way *node)
 {
     return node->value;
 }
 
-singly_ll *singly_ll_next(singly_ll *node)
+one_way *one_way_next(one_way *node)
 {
     return node->next;
 }
 
-singly_ll *singly_ll_insert_after(singly_ll *node, float new_value)
+one_way *one_way_insert_after(one_way *node, float new_value)
 {
-    singly_ll *new_node = malloc(sizeof(singly_ll));
+    one_way *new_node = malloc(sizeof(one_way));
     new_node->next = node->next;
     new_node->value = new_value;
     node->next = new_node;
     return new_node;
 }
 
-float singly_ll_erase_after(singly_ll *node)
+float one_way_erase_after(one_way *node)
 {
     if (node->next)
     {
-        singly_ll *old_node = node->next;
+        one_way *old_node = node->next;
         float old_value = old_node->value;
         node->next = old_node->next;
         free(old_node);
@@ -44,9 +44,9 @@ float singly_ll_erase_after(singly_ll *node)
     return 0.0f;
 }
 
-void singly_ll_free(singly_ll *list)
+void one_way_free(one_way *list)
 {
-    singly_ll *next = 0;
+    one_way *next = 0;
     while (list)
     {
         next = list->next;
