@@ -5,9 +5,6 @@
 
 #include "singly_ll.h"
 #include "doubly_ll.h"
-#include "stack.h"
-#include "queue.h"
-#include "deque.h"
 #include "xored_ll.h"
 
 void print_singly_ll(singly_ll *node)
@@ -81,74 +78,6 @@ void test_doubly_ll()
     doubly_ll_free(list);
 }
 
-void test_stack()
-{
-    puts("Playing with the stack:");
-    stack *st = stack_init();
-    stack_push(st, 1);
-    stack_push(st, 1);
-    stack_push(st, 2);
-    stack_push(st, 3);
-    stack_push(st, 5);
-    stack_push(st, 8);
-    stack_push(st, 13);
-    stack_push(st, 21);
-    while (!stack_empty(st))
-    {
-        printf("%.1f ", stack_pop(st));
-    }
-    putchar('\n');
-    stack_free(st);
-}
-
-void test_queue()
-{
-    puts("Playing with the queue:");
-    queue *q = queue_init();
-    queue_push(q, 1);
-    queue_push(q, 1);
-    queue_push(q, 2);
-    queue_push(q, 3);
-    queue_push(q, 5);
-    queue_push(q, 8);
-    queue_push(q, 13);
-    queue_push(q, 21);
-    while (!queue_empty(q))
-    {
-        printf("%.1f ", queue_pop(q));
-    }
-    putchar('\n');
-    queue_free(q);
-}
-
-void test_deque()
-{
-    puts("Playing with the deque:");
-    deque *dq = deque_init(3);
-    printf("%ld %ld\n", deque_length(dq), deque_capacity(dq));
-    deque_push_back(dq, 1);
-    deque_push_back(dq, 2);
-    deque_push_front(dq, 0.5);
-    deque_push_back(dq, 3);
-    deque_push_front(dq, 0.1);
-    printf("%ld %ld\n", deque_length(dq), deque_capacity(dq));
-    deque_reserve(dq, 10);
-    deque_push_back(dq, 4);
-    printf("%ld %ld\n", deque_length(dq), deque_capacity(dq));
-    deque_reserve(dq, 33);
-    printf("%ld %ld\n", deque_length(dq), deque_capacity(dq));
-    deque_resize(dq, 7);
-    deque_shrink(dq);
-    printf("%ld %ld\n", deque_length(dq), deque_capacity(dq));
-
-    for (size_t i = 0, len = deque_length(dq); i < len; ++i)
-    {
-        printf("%.1f ", deque_get(dq, i));
-    }
-    puts("\n");
-    deque_free(dq);
-}
-
 void test_xor_linked_list()
 {
     puts("Playing with the XOR linked list:");
@@ -178,12 +107,8 @@ void test_xor_linked_list()
 int main()
 {
     srand(time(0));
-
     test_singly_ll();
     test_doubly_ll();
-    test_stack();
-    test_queue();
-    test_deque();
     test_xor_linked_list();
     return 0;
 }
