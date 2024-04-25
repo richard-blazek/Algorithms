@@ -9,7 +9,6 @@
 #include "stack.h"
 #include "queue.h"
 #include "deque.h"
-#include "hash_table.h"
 #include "xored_ll.h"
 
 #define ARRAY_SIZE 55
@@ -197,36 +196,6 @@ void test_deque()
     deque_free(dq);
 }
 
-void test_hash_table()
-{
-    puts("Playing with the hash table:");
-    hash_table *ht = hash_table_init();
-
-    const char *str = "I don't want to live in the hearts of my countrymen; I want to live in my apartment.";
-
-    for (size_t i = 0; i < 66; ++i)
-    {
-        hash_table_put(ht, str + i, i * 10);
-    }
-    for (size_t i = 0; i < 66; i += 2)
-    {
-        hash_table_delete(ht, str + i);
-    }
-    for (size_t i = 1; i < 66; i += 4)
-    {
-        hash_table_delete(ht, str + i);
-    }
-    for (size_t i = 0; i < 66; i += 3)
-    {
-        hash_table_delete(ht, str + i);
-    }
-    for (size_t i = 0; i < 66; ++i)
-    {
-        printf("i: %lu | has: %d | value: %.0f\n", i, hash_table_has(ht, str + i), hash_table_get(ht, str + i));
-    }
-    hash_table_free(ht);
-}
-
 void test_xor_linked_list()
 {
     puts("Playing with the XOR linked list:");
@@ -271,7 +240,6 @@ int main()
     test_stack();
     test_queue();
     test_deque();
-    test_hash_table();
     test_xor_linked_list();
     return 0;
 }
