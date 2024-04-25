@@ -3,9 +3,9 @@ include "assert.f95"
 module sorting_library
     implicit none
     private
-    public bubble_sort, selection_sort, insertion_sort
-    public quick_sort, merge_sort, heap_sort
-    public lsd_radix_sort, msd_radix_sort
+    public bubble_sort, selection_sort, insertion_sort ! Stupid
+    public quick_sort, merge_sort, heap_sort           ! Clever
+    public lsd_radix_sort, msd_radix_sort, three_way_quick_sort ! Used for strings
 
 contains
     subroutine swap(x, y)
@@ -69,7 +69,7 @@ contains
         real, intent(inout) :: array(:)
         integer, intent(out) :: pivot
         integer :: i
-        real ::tmp
+        real :: tmp
 
         pivot = 1
         do i = 1, size(array)
@@ -99,12 +99,14 @@ contains
     end subroutine
 
     subroutine merge(dst, src1, src2)
-        real, intent(out) :: dst(:)
+        real, intent(inout) :: dst(:)
         real, intent(in) :: src1(:), src2(:)
-        integer :: i = 1, j = 1, k
+        integer :: i, j, k
 
-        do k = 1, size(src1) + size(src2)
-            if (i > size(src1) .or. src2(j) < src1(i)) then
+        i = 1
+        j = 1
+        do k = 1, size(dst)
+            if (i > size(src1) .or. (j <= size(src2) .and. src2(j) < src1(i))) then
                 dst(k) = src2(j)
                 j = j + 1
             else
@@ -114,28 +116,20 @@ contains
         end do
     end subroutine
 
-    subroutine merge_all(src, dst, d)
-        real, intent(in) :: src(:)
-        real, intent(out) :: dst(:)
-        integer, intent(in) :: d
-        integer :: i
-
-        do i = 1, size(src), 2 * d
-            call merge(dst(i:), src(i : min(i + d - 1, size(src))), src(i + d : min(i + 2 * d - 1, size(src))))
-        end do
-    end subroutine
-
     subroutine merge_sort(array)
         real, intent(inout) :: array(:)
-        real, allocatable :: tmp(:)
-        integer :: step = 1
+        real :: tmp(size(array))
+        integer :: step, i, end1, end2
 
-        allocate(tmp(size(array)))
-
+        step = 1
         do while (step < size(array))
-            call merge_all(array, tmp, step)
-            call merge_all(tmp, array, step * 2)
-            step = step * 4
+            do i = 1, size(array), 2 * step
+                end1 = min(i + step - 1, size(array))
+                end2 = min(i + step * 2 - 1, size(array))
+                call merge(tmp(i : end2), array(i : end1), array(end1 + 1 : end2))
+            end do
+            array = tmp
+            step = step * 2
         end do
     end subroutine
 
@@ -152,44 +146,41 @@ contains
         end do
     end subroutine
 
-    subroutine heap_remove(heap, val)
+    function heap_remove(heap) result (val)
         real, intent(inout) :: heap(:)
-        real, intent(out) :: val
-        integer :: i = 1, left, right, next
+        real :: val
+        integer :: i
 
         val = heap(1)
         heap(1) = heap(size(heap))
 
-        do while (i * 2 <= size(heap) - 1)
-            left = i * 2
-            right = i * 2 + 1
-            if (right <= size(heap) - 1 .and. heap(right) < heap(left)) then
-                next = right
+        i = 1
+        do while (.true.)
+            if (i*2+1 <= size(heap)-1 .and. heap(i*2+1) > heap(i*2) .and. heap(i*2+1) > heap(i)) then
+                call swap(heap(i*2+1), heap(i))
+                i = i*2+1
+            else if (i*2 <= size(heap)-1 .and. heap(i*2) > heap(i)) then
+                call swap(heap(i*2), heap(i))
+                i = i*2
             else
-                next = left
-            end if
-            if (heap(next) >= heap(i)) then
                 exit
             end if
-
-            call swap(heap(next), heap(i))
-            i = next
         end do
-    end subroutine
+    end function
 
     subroutine heap_sort(array)
         real, intent(inout) :: array(:)
         integer :: i
 
-        do i = 1, size(array)
+        do i = 2, size(array)
             call heap_insert(array(1:i), array(i))
         end do
         do i = size(array), 1, -1
-            call heap_remove(array(1:i), array(i))
+            array(i) = heap_remove(array(1:i))
         end do
     end subroutine
 
-    subroutine radix_sort_one_pass(array, letter_index, starts)
+    subroutine radix_sort_pass(array, letter_index, starts)
         character(32), intent(inout) :: array(:)
         integer, intent(in) :: letter_index
         integer, intent(out) :: starts(0:256)
@@ -222,7 +213,7 @@ contains
         integer :: starts(0:256), letter_index
 
         do letter_index = 32, 1, -1
-            call radix_sort_one_pass(array, letter_index, starts)
+            call radix_sort_pass(array, letter_index, starts)
         end do
     end subroutine
 
@@ -231,7 +222,7 @@ contains
         integer, intent(in) :: letter_index
         integer :: starts(0:256), i
 
-        call radix_sort_one_pass(array, letter_index, starts)
+        call radix_sort_pass(array, letter_index, starts)
 
         if (letter_index < 32) then
             do i = 0, 255
@@ -246,13 +237,60 @@ contains
         character(32), intent(inout) :: array(:)
         call msd_radix_sort_nth(array, 1)
     end subroutine
+
+    subroutine three_way_partition(array, letter_index, begin, end)
+        character(32), intent(inout) :: array(:)
+        integer, intent(in) :: letter_index
+        integer, intent(out) :: begin, end
+        character(32) :: tmp
+        integer :: i
+
+        begin = 1
+        end = 1
+        do i = 2, size(array)
+            if (array(i)(letter_index:letter_index) == array(begin)(letter_index:letter_index)) then
+                tmp = array(end + 1)
+                array(end + 1) = array(i)
+                array(i) = tmp
+                end = end + 1
+            else if (array(i)(letter_index:letter_index) < array(begin)(letter_index:letter_index)) then
+                tmp = array(begin)
+                array(begin) = array(i)
+                array(i) = array(end + 1)
+                array(end + 1) = tmp
+                begin = begin + 1
+                end = end + 1
+            end if
+        end do
+    end subroutine
+
+    recursive subroutine three_way_pass(array, letter_index)
+        character(32), intent(inout) :: array(:)
+        integer, intent(in) :: letter_index
+        integer :: begin, end
+
+        call three_way_partition(array, letter_index, begin, end)
+        if (begin > 2) then
+            call three_way_pass(array(:begin-1), letter_index)
+        end if
+        if (end - begin > 0 .and. letter_index < 32) then
+            call three_way_pass(array(begin:end), letter_index + 1)
+        end if
+        if (end < size(array) - 1) then
+            call three_way_pass(array(end+1:), letter_index)
+        end if
+    end subroutine
+
+    subroutine three_way_quick_sort(array)
+        character(32), intent(inout) :: array(:)
+        call three_way_pass(array, 1)
+    end subroutine
 end module
 
 module testing_tools
     implicit none
     private
-    public is_sorted_real, is_sorted_str
-    public random_str
+    public is_sorted_real, is_sorted_str, random_real, random_str
 
 contains
     function is_sorted_real(array) result(sorted)
@@ -265,6 +303,7 @@ contains
             sorted = sorted .and. (array(i) <= array(i + 1))
         end do
     end function
+
     function is_sorted_str(array) result(sorted)
         character(32), intent(in) :: array(:)
         logical :: sorted
@@ -297,6 +336,13 @@ contains
             end do
         end do
     end subroutine
+
+    subroutine random_real(array)
+        real, intent(out) :: array(:)
+
+        call random_number(array)
+        array = floor(array * 1000)
+    end subroutine
 end module
 
 program sorting_test
@@ -304,58 +350,67 @@ program sorting_test
     use testing_tools
     implicit none
 
-    real :: real_array (55)
-    character(32) :: str_array (55)
+    real :: real_array (97)
+    character(32) :: str_array (97)
+    integer :: i
 
     call random_seed()
 
-    call random_number(real_array)
-    call bubble_sort(real_array)
-    call assert(is_sorted_real(real_array))
-    call bubble_sort(real_array)
-    call assert(is_sorted_real(real_array))
+    do i = 1, 1
+        call random_real(real_array)
+        call bubble_sort(real_array)
+        call assert(is_sorted_real(real_array))
+        call bubble_sort(real_array)
+        call assert(is_sorted_real(real_array))
 
-    call random_number(real_array)
-    call selection_sort(real_array)
-    call assert(is_sorted_real(real_array))
-    call selection_sort(real_array)
-    call assert(is_sorted_real(real_array))
+        call random_real(real_array)
+        call selection_sort(real_array)
+        call assert(is_sorted_real(real_array))
+        call selection_sort(real_array)
+        call assert(is_sorted_real(real_array))
 
-    call random_number(real_array)
-    call insertion_sort(real_array)
-    call assert(is_sorted_real(real_array))
-    call insertion_sort(real_array)
-    call assert(is_sorted_real(real_array))
+        call random_real(real_array)
+        call insertion_sort(real_array)
+        call assert(is_sorted_real(real_array))
+        call insertion_sort(real_array)
+        call assert(is_sorted_real(real_array))
+        
+        call random_real(real_array)
+        call quick_sort(real_array)
+        call assert(is_sorted_real(real_array))
+        call quick_sort(real_array)
+        call assert(is_sorted_real(real_array))
+        
+        call random_real(real_array)
+        call merge_sort(real_array)
+        call assert(is_sorted_real(real_array))
+        call merge_sort(real_array)
+        call assert(is_sorted_real(real_array))
+        
+        call random_real(real_array)
+        call heap_sort(real_array)
+        call assert(is_sorted_real(real_array))
+        call heap_sort(real_array)
+        call assert(is_sorted_real(real_array))
 
-    call random_number(real_array)
-    call quick_sort(real_array)
-    call assert(is_sorted_real(real_array))
-    call quick_sort(real_array)
-    call assert(is_sorted_real(real_array))
+        call random_str(str_array)
+        call lsd_radix_sort(str_array)
+        call assert(is_sorted_str(str_array))
+        call lsd_radix_sort(str_array)
+        call assert(is_sorted_str(str_array))
 
-    call random_number(real_array)
-    call merge_sort(real_array)
-    call assert(is_sorted_real(real_array))
-    call merge_sort(real_array)
-    call assert(is_sorted_real(real_array))
+        call random_str(str_array)
+        call msd_radix_sort(str_array)
+        call assert(is_sorted_str(str_array))
+        call msd_radix_sort(str_array)
+        call assert(is_sorted_str(str_array))
 
-    call random_number(real_array)
-    call heap_sort(real_array)
-    call assert(is_sorted_real(real_array))
-    call heap_sort(real_array)
-    call assert(is_sorted_real(real_array))
-
-    call random_str(str_array)
-    call lsd_radix_sort(str_array)
-    call assert(is_sorted_str(str_array))
-    call lsd_radix_sort(str_array)
-    call assert(is_sorted_str(str_array))
-
-    call random_str(str_array)
-    call msd_radix_sort(str_array)
-    call assert(is_sorted_str(str_array))
-    call msd_radix_sort(str_array)
-    call assert(is_sorted_str(str_array))
+        call random_str(str_array)
+        call three_way_quick_sort(str_array)
+        call assert(is_sorted_str(str_array))
+        call three_way_quick_sort(str_array)
+        call assert(is_sorted_str(str_array))
+    end do
 
     print *, 'Tests passed!'
 end program
