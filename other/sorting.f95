@@ -231,11 +231,13 @@ contains
         integer, intent(in) :: letter_index
         integer :: starts(0:256), i
 
-        if (letter_index <= 32 .and. size(array) > 1) then
-            call radix_sort_one_pass(array, letter_index, starts)
+        call radix_sort_one_pass(array, letter_index, starts)
 
+        if (letter_index < 32) then
             do i = 0, 255
-                call msd_radix_sort_nth(array(starts(i):starts(i + 1) - 1), letter_index + 1)
+                if (starts(i + 1) - starts(i) >= 2) then
+                    call msd_radix_sort_nth(array(starts(i):starts(i + 1) - 1), letter_index + 1)
+                end if
             end do
         end if
     end subroutine msd_radix_sort_nth
