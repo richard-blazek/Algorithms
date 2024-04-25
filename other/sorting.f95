@@ -327,7 +327,7 @@ contains
         end do
     end function
 
-    function rand_int(range) result (val)
+    function random_int(range) result (val)
         integer, intent(in) :: range
         integer :: val
         real :: random
@@ -343,7 +343,7 @@ contains
 
         do i = 1, size(array)
             do j = 1, 32
-                letter = rand_int(36)
+                letter = random_int(36)
                 array(i)(j:j) = alphabet(letter:letter)
             end do
         end do
