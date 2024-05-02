@@ -32,7 +32,7 @@ class PriorityQueue:
 
     def _increase_priority(self, identity: int, priority: float):
         self._heap[self._map[identity]][1] = priority
-        self._bubble_up(self._map[identity])
+        self._bubble_down(self._map[identity])
 
     def set_priority(self, identity: int, priority: float):
         if priority < self.priority(identity):
