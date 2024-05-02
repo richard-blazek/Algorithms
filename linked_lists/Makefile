@@ -1,8 +1,8 @@
-all: linked_lists.c one_way.c two_way.c xor_way.c
-	cc -fsanitize=address linked_lists.c one_way.c two_way.c xor_way.c -o linked_lists.elf
+all: test_linked_list.c singly_linked_list.c doubly_linked_list.c xorptr_linked_list.c
+	cc -fsanitize=address test_linked_list.c singly_linked_list.c doubly_linked_list.c xorptr_linked_list.c -o test_linked_list.elf
 
 test: all
-	./linked_lists.elf
+	./test_linked_list.elf
 
 clean:
-	rm -rf linked_lists.elf
+	rm -rf test_linked_list.elf
